@@ -2,454 +2,237 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GTA5RP Helper</title>
+<title>2Helper</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap');
 :root {
-  --bg: #0a0a10;
-  --bg2: #12121c;
-  --bg3: #1c1c2e;
-  --bg4: #252540;
-  --accent: #7c5cfc;
-  --accent2: #6344e0;
-  --accent-glow: rgba(124,92,252,.25);
-  --green: #3dd68c;
-  --green-glow: rgba(61,214,140,.2);
-  --red: #f5555d;
-  --red-glow: rgba(245,85,93,.2);
-  --yellow: #f5c542;
-  --text: #e8e8f0;
-  --text2: #7878a0;
-  --border: #22223a;
-  --glass: rgba(255,255,255,.03);
-  --radius: 14px;
+  --bg:#0c0c14; --bg2:#13131f; --bg3:#1b1b2e; --bg4:#252542;
+  --accent:#7c5cfc; --accent2:#6344e0; --accent-g:rgba(124,92,252,.25);
+  --green:#3dd68c; --red:#f5555d; --yellow:#f5c542; --orange:#f5a623;
+  --text:#e8e8f0; --text2:#6a6a90; --border:#1e1e38; --glass:rgba(255,255,255,.03);
+  --r:14px;
 }
-* { margin:0; padding:0; box-sizing:border-box; }
-body {
-  font-family: 'Montserrat', 'Segoe UI', system-ui, sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  overflow: hidden;
-  height: 100vh;
-  user-select: none;
-}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Montserrat',system-ui,sans-serif;background:var(--bg);color:var(--text);overflow:hidden;height:100vh;user-select:none}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:3px}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes scaleIn{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:scale(1)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes breathe{0%,100%{box-shadow:0 0 8px rgba(61,214,140,.2)}50%{box-shadow:0 0 24px rgba(61,214,140,.3)}}
+@keyframes sheen{0%{left:-100%}100%{left:200%}}
+@keyframes countPop{0%{transform:scale(1)}30%{transform:scale(1.35)}100%{transform:scale(1)}}
+.pop{animation:countPop .3s ease}
 
-/* ─── Custom Scrollbar ─── */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--bg4); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+/* Titlebar */
+.titlebar{height:40px;background:linear-gradient(90deg,var(--bg),var(--bg2));display:flex;align-items:center;justify-content:space-between;padding:0 12px;-webkit-app-region:drag;border-bottom:1px solid var(--border)}
+.titlebar-left{display:flex;align-items:center;gap:8px}
+.titlebar-icon{width:22px;height:22px;border-radius:6px;background:linear-gradient(135deg,var(--accent),#a78bfa);display:flex;align-items:center;justify-content:center;font-size:11px}
+.titlebar-title{font-size:12px;font-weight:700;color:var(--text2);letter-spacing:1px;text-transform:uppercase}
+.titlebar-btns{display:flex;gap:4px;-webkit-app-region:no-drag}
+.titlebar-btn{width:34px;height:28px;border:none;background:transparent;color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;border-radius:8px;font-size:14px;transition:.2s}
+.titlebar-btn:hover{background:var(--bg4);color:var(--text)}
+.titlebar-btn.close:hover{background:var(--red);color:#fff}
 
-/* ─── Animations ─── */
-@keyframes fadeIn { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
-@keyframes slideIn { from { opacity:0; transform:translateX(-20px); } to { opacity:1; transform:translateX(0); } }
-@keyframes scaleIn { from { opacity:0; transform:scale(.9); } to { opacity:1; transform:scale(1); } }
-@keyframes countPop { 0% { transform:scale(1); } 30% { transform:scale(1.4); } 100% { transform:scale(1); } }
-@keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:.3; } }
-@keyframes breathe { 0%,100% { box-shadow: 0 0 8px var(--green-glow); } 50% { box-shadow: 0 0 20px var(--green-glow), 0 0 40px var(--green-glow); } }
-@keyframes sheen { 0% { left:-100%; } 100% { left:200%; } }
-@keyframes confetti-fall { 0% { transform:translateY(-10px) rotate(0deg); opacity:1; } 100% { transform:translateY(120px) rotate(720deg); opacity:0; } }
-@keyframes ripple { 0% { transform:scale(0); opacity:.5; } 100% { transform:scale(4); opacity:0; } }
-@keyframes glow-pulse { 0%,100% { opacity:.6; } 50% { opacity:1; } }
+/* Layout */
+.app-container{height:calc(100vh - 40px);position:relative;overflow:hidden}
 
-.pop { animation: countPop .3s ease; }
-.slide-in { animation: slideIn .3s ease; }
-.scale-in { animation: scaleIn .25s ease; }
+/* ─── MAIN PAGE (PulseBotz grid) ─── */
+.page{position:absolute;inset:0;overflow-y:auto;display:none;animation:fadeIn .25s ease}
+.page.active{display:block}
 
-/* ─── Titlebar ─── */
-.titlebar {
-  height: 40px;
-  background: linear-gradient(135deg, var(--bg) 0%, var(--bg2) 100%);
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 0 12px;
-  -webkit-app-region: drag;
-  border-bottom: 1px solid var(--border);
-}
-.titlebar-title { font-size: 12px; font-weight: 600; color: var(--text2); margin-left: 6px; letter-spacing: .5px; }
-.titlebar-btns { display: flex; gap: 4px; -webkit-app-region: no-drag; }
-.titlebar-btn {
-  width: 34px; height: 28px; border: none; background: transparent;
-  color: var(--text2); cursor: pointer; display: flex; align-items: center; justify-content: center;
-  border-radius: 8px; font-size: 14px; transition: all .2s;
-}
-.titlebar-btn:hover { background: var(--bg4); color: var(--text); }
-.titlebar-btn.close:hover { background: var(--red); color: #fff; }
+.main-page{display:flex;flex-direction:column;align-items:center;padding:30px}
+.main-logo{font-size:36px;font-weight:800;text-align:center;margin-bottom:40px;position:relative;background:linear-gradient(135deg,var(--accent),#a78bfa,var(--accent));background-size:200% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.main-logo::after{content:'';position:absolute;top:0;left:-100%;width:50%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.12),transparent);animation:sheen 5s ease-in-out infinite}
 
-/* ─── Layout ─── */
-.app { display: flex; height: calc(100vh - 40px); }
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;max-width:720px;width:100%}
+.grid-item{
+  background:linear-gradient(145deg,var(--bg3),var(--bg2));
+  border:1px solid var(--border);border-radius:16px;
+  padding:24px 12px;text-align:center;cursor:pointer;
+  transition:all .25s ease;position:relative;overflow:hidden;
+}
+.grid-item::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% 50%,var(--accent-g) 0%,transparent 70%);opacity:0;transition:.3s}
+.grid-item:hover{border-color:var(--accent);transform:translateY(-4px);box-shadow:0 12px 35px rgba(0,0,0,.5)}
+.grid-item:hover::before{opacity:1}
+.grid-item:active{transform:scale(.96)}
+.grid-icon{font-size:42px;margin-bottom:8px;position:relative;filter:drop-shadow(0 4px 8px rgba(0,0,0,.3))}
+.grid-label{font-size:12px;font-weight:600;color:var(--text2);position:relative;text-transform:uppercase;letter-spacing:.5px}
 
-/* ─── Sidebar ─── */
-.sidebar {
-  width: 230px; min-width: 230px;
-  background: linear-gradient(180deg, var(--bg2) 0%, var(--bg) 100%);
-  border-right: 1px solid var(--border);
-  display: flex; flex-direction: column;
-  padding: 20px 14px;
-}
-.sidebar-logo {
-  font-size: 20px; font-weight: 800;
-  text-align: center; margin-bottom: 2px;
-  background: linear-gradient(135deg, var(--accent) 0%, #a78bfa 50%, var(--accent) 100%);
-  background-size: 200% 100%;
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-  position: relative; overflow: hidden;
-}
-.sidebar-logo::after {
-  content: '';
-  position: absolute; top: 0; left: -100%;
-  width: 60%; height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,.15), transparent);
-  animation: sheen 4s ease-in-out infinite;
-}
-.sidebar-sub { font-size: 10px; color: var(--text2); text-align: center; margin-bottom: 24px; letter-spacing: 2px; text-transform: uppercase; }
+/* Side buttons (like PulseBotz right sidebar) */
+.side-btns{position:fixed;right:16px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:8px;z-index:10}
+.side-btn{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,var(--bg3),var(--bg2));border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;transition:all .2s;color:var(--text2)}
+.side-btn:hover{border-color:var(--accent);color:var(--text);transform:scale(1.08);box-shadow:0 4px 15px rgba(0,0,0,.4)}
 
-.nav-item {
-  display: flex; align-items: center; gap: 12px;
-  padding: 11px 16px; border-radius: var(--radius);
-  cursor: pointer; font-size: 13px; font-weight: 500;
-  color: var(--text2); transition: all .2s ease;
-  margin-bottom: 4px; position: relative; overflow: hidden;
-}
-.nav-item svg { width: 18px; height: 18px; flex-shrink: 0; transition: transform .2s; }
-.nav-item:hover { background: var(--glass); color: var(--text); backdrop-filter: blur(10px); }
-.nav-item:hover svg { transform: scale(1.15); }
-.nav-item.active {
-  background: linear-gradient(135deg, var(--accent), var(--accent2));
-  color: #fff; box-shadow: 0 4px 20px var(--accent-glow);
-}
-.nav-item.active svg { transform: scale(1.1); }
-.nav-spacer { flex: 1; }
-.nav-version { font-size: 10px; color: var(--text2); text-align: center; padding: 8px; opacity: .6; }
+/* Left social buttons */
+.social-btns{position:fixed;left:16px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:8px;z-index:10}
 
-/* ─── Content ─── */
-.content { flex: 1; overflow-y: auto; padding: 28px 32px; }
-.tab { display: none; }
-.tab.active { display: block; animation: fadeIn .3s ease; }
-.tab h2 { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
-.tab .subtitle { font-size: 13px; color: var(--text2); margin-bottom: 20px; }
+/* Sub-page header */
+.sub-header{display:flex;align-items:center;gap:12px;margin-bottom:20px;padding:0 24px;padding-top:20px}
+.back-btn{padding:7px 18px;border-radius:20px;border:1px solid var(--accent);background:transparent;color:var(--accent);cursor:pointer;font-family:inherit;font-size:12px;font-weight:600;transition:.2s}
+.back-btn:hover{background:var(--accent);color:#fff}
+.sub-title{font-size:20px;font-weight:700}
+.sub-content{padding:0 24px 24px}
 
-/* ─── Cards (Glassmorphism) ─── */
-.card {
-  background: linear-gradient(135deg, var(--glass), rgba(255,255,255,.01));
-  backdrop-filter: blur(12px);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 22px; margin-bottom: 18px;
-  transition: border-color .3s, box-shadow .3s;
-}
-.card:hover { border-color: rgba(124,92,252,.3); box-shadow: 0 4px 30px rgba(0,0,0,.3); }
-.card-title {
-  font-size: 14px; font-weight: 700; margin-bottom: 14px;
-  color: var(--text); display: flex; align-items: center; gap: 8px;
-  text-transform: uppercase; letter-spacing: .5px;
-}
-.card-title svg { width: 18px; height: 18px; color: var(--accent); }
+/* Cards */
+.card{background:linear-gradient(135deg,var(--glass),rgba(255,255,255,.01));backdrop-filter:blur(12px);border:1px solid var(--border);border-radius:var(--r);padding:22px;margin-bottom:16px;transition:.3s}
+.card:hover{border-color:rgba(124,92,252,.2)}
+.card-title{font-size:13px;font-weight:700;margin-bottom:14px;text-transform:uppercase;letter-spacing:.5px;display:flex;align-items:center;gap:8px}
 
-/* ─── Stats Grid ─── */
-.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 14px; margin-bottom: 18px; }
-.stat-box {
-  background: linear-gradient(135deg, var(--bg3), var(--bg2));
-  border: 1px solid var(--border);
-  border-radius: var(--radius); padding: 18px 20px; text-align: center;
-  transition: transform .2s, box-shadow .2s;
-}
-.stat-box:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,0,0,.4); }
-.stat-value { font-size: 26px; font-weight: 800; margin-bottom: 4px; }
-.stat-label { font-size: 11px; color: var(--text2); text-transform: uppercase; letter-spacing: .5px; }
-.stat-value.green { color: var(--green); text-shadow: 0 0 20px var(--green-glow); }
-.stat-value.red { color: var(--red); text-shadow: 0 0 20px var(--red-glow); }
-.stat-value.yellow { color: var(--yellow); }
-.stat-value.accent { color: var(--accent); text-shadow: 0 0 20px var(--accent-glow); }
+/* Stats */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:16px}
+.stat-box{background:linear-gradient(135deg,var(--bg3),var(--bg2));border:1px solid var(--border);border-radius:var(--r);padding:16px;text-align:center;transition:.2s}
+.stat-box:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.4)}
+.stat-value{font-size:24px;font-weight:800;margin-bottom:2px}
+.stat-label{font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:.5px}
+.stat-value.green{color:var(--green)}.stat-value.red{color:var(--red)}.stat-value.yellow{color:var(--yellow)}.stat-value.accent{color:var(--accent)}
 
-/* ─── Buttons ─── */
-.btn {
-  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-  padding: 10px 20px; border: none; border-radius: var(--radius);
-  font-family: inherit; font-size: 13px; font-weight: 600;
-  cursor: pointer; transition: all .2s; color: #fff;
-  position: relative; overflow: hidden;
-}
-.btn::after {
-  content: ''; position: absolute; inset: 0; border-radius: inherit;
-  background: radial-gradient(circle at var(--x,50%) var(--y,50%), rgba(255,255,255,.15) 0%, transparent 60%);
-  opacity: 0; transition: opacity .3s;
-}
-.btn:hover::after { opacity: 1; }
-.btn-accent { background: linear-gradient(135deg, var(--accent), var(--accent2)); box-shadow: 0 4px 15px var(--accent-glow); }
-.btn-accent:hover { box-shadow: 0 6px 25px var(--accent-glow); transform: translateY(-1px); }
-.btn-green { background: linear-gradient(135deg, var(--green), #2ab87a); color: #000; box-shadow: 0 4px 15px var(--green-glow); }
-.btn-green:hover { box-shadow: 0 6px 25px var(--green-glow); transform: translateY(-1px); }
-.btn-red { background: linear-gradient(135deg, var(--red), #d44); box-shadow: 0 4px 15px var(--red-glow); }
-.btn-red:hover { box-shadow: 0 6px 25px var(--red-glow); transform: translateY(-1px); }
-.btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--text2); }
-.btn-ghost:hover { background: var(--bg4); color: var(--text); border-color: var(--text2); }
-.btn-sm { padding: 6px 14px; font-size: 11px; }
+/* Buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px 20px;border:none;border-radius:var(--r);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;transition:.2s;color:#fff}
+.btn-accent{background:linear-gradient(135deg,var(--accent),var(--accent2));box-shadow:0 4px 15px var(--accent-g)}
+.btn-accent:hover{box-shadow:0 6px 25px var(--accent-g);transform:translateY(-1px)}
+.btn-green{background:linear-gradient(135deg,var(--green),#2ab87a);color:#000}
+.btn-red{background:linear-gradient(135deg,var(--red),#d44)}
+.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--text2)}
+.btn-ghost:hover{background:var(--bg4);color:var(--text)}
+.btn-sm{padding:6px 14px;font-size:11px}
+.btn-orange{background:linear-gradient(135deg,var(--orange),#f57723)}
 
-/* ─── EMS Action Buttons ─── */
-.ems-actions { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 18px; }
-.ems-action-btn {
-  flex: 1; min-width: 160px;
-  background: linear-gradient(145deg, var(--bg3), var(--bg2));
-  border: 2px solid var(--border);
-  border-radius: var(--radius); padding: 20px;
-  cursor: pointer; transition: all .25s ease;
-  text-align: center; position: relative; overflow: hidden;
-}
-.ems-action-btn::before {
-  content: ''; position: absolute; inset: 0;
-  background: radial-gradient(circle at 50% 50%, var(--accent-glow) 0%, transparent 70%);
-  opacity: 0; transition: opacity .3s;
-}
-.ems-action-btn:hover { border-color: var(--accent); transform: translateY(-3px); box-shadow: 0 8px 30px rgba(0,0,0,.4); }
-.ems-action-btn:hover::before { opacity: 1; }
-.ems-action-btn:active { transform: scale(.96); }
-.ems-action-name { font-size: 13px; font-weight: 700; margin-bottom: 4px; position: relative; text-transform: uppercase; letter-spacing: .5px; }
-.ems-action-price { font-size: 11px; color: var(--green); position: relative; }
-.ems-action-count { font-size: 32px; font-weight: 800; color: var(--accent); margin: 10px 0 4px; position: relative; }
-.ems-action-total { font-size: 11px; color: var(--text2); position: relative; }
-.ems-minus {
-  display: inline-flex; align-items: center; justify-content: center;
-  width: 26px; height: 26px; border-radius: 50%;
-  background: var(--bg); border: 1px solid var(--border);
-  color: var(--red); cursor: pointer; font-size: 15px; font-weight: 700;
-  margin-top: 8px; transition: all .2s; position: relative;
-}
-.ems-minus:hover { background: var(--red); color: #fff; box-shadow: 0 0 15px var(--red-glow); }
+/* EMS buttons */
+.ems-actions{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:16px}
+.ems-action-btn{flex:1;min-width:150px;background:linear-gradient(145deg,var(--bg3),var(--bg2));border:2px solid var(--border);border-radius:var(--r);padding:20px;cursor:pointer;transition:.25s;text-align:center;position:relative;overflow:hidden}
+.ems-action-btn:hover{border-color:var(--accent);transform:translateY(-3px);box-shadow:0 8px 25px rgba(0,0,0,.4)}
+.ems-action-btn:active{transform:scale(.96)}
+.ems-action-name{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.ems-action-price{font-size:11px;color:var(--green);margin-top:2px}
+.ems-action-count{font-size:30px;font-weight:800;color:var(--accent);margin:8px 0 2px}
+.ems-action-total{font-size:11px;color:var(--text2)}
+.ems-minus{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:var(--bg);border:1px solid var(--border);color:var(--red);cursor:pointer;font-size:14px;font-weight:700;margin-top:6px;transition:.2s}
+.ems-minus:hover{background:var(--red);color:#fff}
 
-/* ─── Progress Bar ─── */
-.progress-bar { width: 100%; height: 6px; background: var(--bg); border-radius: 3px; overflow: hidden; margin: 12px 0; }
-.progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--green)); border-radius: 3px; transition: width .5s ease; }
+/* Session */
+.session-badge{display:inline-flex;align-items:center;gap:8px;padding:7px 16px;border-radius:20px;font-size:12px;font-weight:600}
+.session-badge.active{background:rgba(61,214,140,.1);color:var(--green);animation:breathe 3s infinite}
+.session-badge.inactive{background:rgba(136,136,160,.08);color:var(--text2)}
+.pulse-dot{width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse 1.5s infinite}
+.progress-bar{width:100%;height:6px;background:var(--bg);border-radius:3px;overflow:hidden;margin:12px 0}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--green));border-radius:3px;transition:width .5s}
 
-/* ─── Inputs ─── */
-.input-group { margin-bottom: 14px; }
-.input-group label { display: block; font-size: 11px; color: var(--text2); margin-bottom: 5px; text-transform: uppercase; letter-spacing: .5px; }
-.input-row { display: flex; gap: 12px; flex-wrap: wrap; }
-input, select {
-  background: var(--bg3); border: 1px solid var(--border);
-  border-radius: 10px; padding: 11px 16px;
-  color: var(--text); font-family: inherit; font-size: 13px;
-  width: 100%; outline: none;
-  transition: border-color .2s, box-shadow .2s;
-}
-input:focus, select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
-input::placeholder { color: var(--text2); }
+/* Inputs */
+.input-group{margin-bottom:12px}
+.input-group label{display:block;font-size:10px;color:var(--text2);margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px}
+.input-row{display:flex;gap:12px;flex-wrap:wrap}
+input,select{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:10px 14px;color:var(--text);font-family:inherit;font-size:13px;width:100%;outline:none;transition:.2s}
+input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-g)}
 
-/* ─── Transactions ─── */
-.tx-list { max-height: 320px; overflow-y: auto; }
-.tx-item {
-  display: flex; align-items: center;
-  padding: 11px 16px; border-bottom: 1px solid rgba(255,255,255,.03);
-  font-size: 13px; gap: 14px; transition: background .15s;
-}
-.tx-item:hover { background: var(--glass); }
-.tx-item:last-child { border-bottom: none; }
-.tx-amount { font-weight: 700; min-width: 110px; text-align: right; font-size: 14px; }
-.tx-amount.pos { color: var(--green); }
-.tx-amount.neg { color: var(--red); }
-.tx-comment { flex: 1; color: var(--text2); font-size: 12px; }
-.tx-date { font-size: 10px; color: var(--text2); min-width: 85px; opacity: .7; }
-.tx-del {
-  width: 26px; height: 26px; border-radius: 50%;
-  background: transparent; border: none; color: var(--text2);
-  cursor: pointer; display: flex; align-items: center; justify-content: center;
-  transition: all .2s; font-size: 12px;
-}
-.tx-del:hover { background: var(--red); color: #fff; box-shadow: 0 0 10px var(--red-glow); }
+/* TX list */
+.tx-list{max-height:300px;overflow-y:auto}
+.tx-item{display:flex;align-items:center;padding:10px 14px;border-bottom:1px solid rgba(255,255,255,.03);font-size:13px;gap:12px;transition:.15s}
+.tx-item:hover{background:var(--glass)}
+.tx-amount{font-weight:700;min-width:100px;text-align:right}
+.tx-amount.pos{color:var(--green)}.tx-amount.neg{color:var(--red)}
+.tx-comment{flex:1;color:var(--text2);font-size:12px}
+.tx-date{font-size:10px;color:var(--text2);min-width:80px;opacity:.7}
+.tx-del{width:24px;height:24px;border-radius:50%;background:transparent;border:none;color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s;font-size:11px}
+.tx-del:hover{background:var(--red);color:#fff}
 
-/* ─── Inventory ─── */
-.inv-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 14px; }
-.inv-card {
-  background: linear-gradient(145deg, var(--bg3), var(--bg2));
-  border-radius: var(--radius); padding: 18px; position: relative;
-  border: 1px solid var(--border); transition: all .3s ease;
-}
-.inv-card:hover { border-color: var(--accent); transform: translateY(-3px) scale(1.01); box-shadow: 0 12px 35px rgba(0,0,0,.5); }
-.inv-name { font-size: 14px; font-weight: 700; margin-bottom: 6px; }
-.inv-price { font-size: 13px; color: var(--yellow); margin-bottom: 4px; font-weight: 600; }
-.inv-date { font-size: 10px; color: var(--text2); margin-bottom: 12px; }
-.inv-actions { display: flex; gap: 8px; }
+/* Inventory */
+.inv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.inv-card{background:linear-gradient(145deg,var(--bg3),var(--bg2));border-radius:var(--r);padding:16px;border:1px solid var(--border);transition:.3s}
+.inv-card:hover{border-color:var(--accent);transform:translateY(-2px)}
 
-/* ─── Calc Result ─── */
-.calc-result { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-top: 18px; }
-.calc-item {
-  background: linear-gradient(135deg, var(--bg3), var(--bg));
-  border: 1px solid var(--border);
-  border-radius: var(--radius); padding: 16px; text-align: center;
-  transition: transform .2s;
-}
-.calc-item:hover { transform: scale(1.03); }
-.calc-item-value { font-size: 20px; font-weight: 800; }
-.calc-item-label { font-size: 10px; color: var(--text2); margin-top: 4px; text-transform: uppercase; letter-spacing: .5px; }
+/* Calc */
+.calc-result{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-top:16px}
+.calc-item{background:linear-gradient(135deg,var(--bg3),var(--bg));border:1px solid var(--border);border-radius:var(--r);padding:14px;text-align:center;transition:.2s}
+.calc-item:hover{transform:scale(1.03)}
+.calc-item-value{font-size:18px;font-weight:800}
+.calc-item-label{font-size:10px;color:var(--text2);margin-top:2px;text-transform:uppercase}
 
-/* ─── Work selector ─── */
-.work-selector { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
-.work-chip {
-  padding: 8px 18px; border-radius: 20px;
-  background: var(--bg3); border: 1px solid var(--border);
-  cursor: pointer; font-size: 12px; font-weight: 500; transition: all .2s;
-}
-.work-chip:hover { background: var(--bg4); color: var(--text); border-color: var(--text2); transform: translateY(-1px); }
-.work-chip.active { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff; border-color: transparent; box-shadow: 0 4px 15px var(--accent-glow); }
+/* Work chips */
+.work-selector{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.work-chip{padding:7px 16px;border-radius:20px;background:var(--bg3);border:1px solid var(--border);cursor:pointer;font-size:11px;font-weight:500;transition:.2s}
+.work-chip:hover{background:var(--bg4);border-color:var(--text2)}
 
-/* ─── Session ─── */
-.session-badge { display: inline-flex; align-items: center; gap: 8px; padding: 7px 16px; border-radius: 20px; font-size: 12px; font-weight: 600; }
-.session-badge.active { background: rgba(61,214,140,.1); color: var(--green); animation: breathe 3s ease-in-out infinite; }
-.session-badge.inactive { background: rgba(136,136,160,.08); color: var(--text2); }
-.pulse-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); animation: pulse 1.5s infinite; }
+/* Session history */
+.session-item{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:10px;background:linear-gradient(135deg,var(--bg3),var(--bg2));border:1px solid var(--border);margin-bottom:6px;font-size:12px;transition:.2s}
+.session-item:hover{border-color:var(--accent);transform:translateX(3px)}
+.session-type{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;padding:3px 10px;border-radius:10px;font-size:10px;font-weight:700;text-transform:uppercase}
+.session-profit{color:var(--green);font-weight:700;margin-left:auto}
 
-.session-item {
-  display: flex; align-items: center; gap: 14px;
-  padding: 12px 16px; border-radius: 10px;
-  background: linear-gradient(135deg, var(--bg3), var(--bg2));
-  border: 1px solid var(--border);
-  margin-bottom: 8px; font-size: 13px;
-  transition: all .2s; animation: slideIn .3s ease;
-}
-.session-item:hover { border-color: var(--accent); transform: translateX(4px); }
-.session-type { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff; padding: 3px 12px; border-radius: 12px; font-size: 10px; font-weight: 700; text-transform: uppercase; }
-.session-profit { color: var(--green); font-weight: 700; margin-left: auto; font-size: 14px; }
+/* Modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:100}
+.modal-overlay.show{display:flex}
+.modal{background:linear-gradient(135deg,var(--bg2),var(--bg));border:1px solid var(--border);border-radius:var(--r);padding:28px;width:420px;max-width:90vw;animation:scaleIn .25s;box-shadow:0 25px 60px rgba(0,0,0,.6)}
 
-/* ─── Modal ─── */
-.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.7); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 100; }
-.modal-overlay.show { display: flex; }
-.modal {
-  background: linear-gradient(135deg, var(--bg2), var(--bg));
-  border: 1px solid var(--border);
-  border-radius: var(--radius); padding: 28px;
-  width: 420px; max-width: 90vw;
-  animation: scaleIn .25s ease;
-  box-shadow: 0 25px 60px rgba(0,0,0,.6);
-}
-.modal-title { font-size: 16px; font-weight: 700; margin-bottom: 18px; }
-
-/* ─── Success Popup ─── */
-.success-overlay {
-  position: fixed; inset: 0; background: rgba(0,0,0,.8);
-  display: none; align-items: center; justify-content: center;
-  z-index: 200; backdrop-filter: blur(6px);
-}
-.success-overlay.show { display: flex; }
-.success-box {
-  background: linear-gradient(135deg, var(--bg2), var(--bg));
-  border: 2px solid var(--green); border-radius: 20px;
-  padding: 40px 50px; text-align: center;
-  animation: scaleIn .4s ease; position: relative;
-  box-shadow: 0 0 60px var(--green-glow);
-}
-.success-icon { font-size: 48px; margin-bottom: 12px; }
-.success-title { font-size: 22px; font-weight: 800; color: var(--green); margin-bottom: 8px; }
-.success-profit { font-size: 36px; font-weight: 800; margin-bottom: 8px; }
-.success-detail { font-size: 13px; color: var(--text2); }
-
-/* ─── Confetti ─── */
-.confetti-container { position: fixed; inset: 0; pointer-events: none; z-index: 300; overflow: hidden; }
-.confetti {
-  position: absolute; width: 8px; height: 8px; border-radius: 2px;
-  animation: confetti-fall 2s ease-out forwards;
-}
+/* Status bar */
+.status-bar{position:absolute;bottom:0;left:0;right:0;height:28px;background:var(--bg2);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 16px;font-size:10px;color:var(--text2)}
+.status-dot{width:6px;height:6px;border-radius:50%;margin-right:6px;display:inline-block}
+.status-dot.online{background:var(--green)}.status-dot.offline{background:var(--red)}
 </style>
 </head>
 <body>
 
 <div class="titlebar">
-  <span class="titlebar-title">GTA5RP HELPER</span>
+  <div class="titlebar-left">
+    <div class="titlebar-icon">2H</div>
+    <span class="titlebar-title">2Helper</span>
+  </div>
   <div class="titlebar-btns">
-    <button class="titlebar-btn" onclick="pywebview.api && window.minimize && window.minimize()" title="Свернуть">─</button>
-    <button class="titlebar-btn close" onclick="window.close()" title="Закрыть">✕</button>
+    <button class="titlebar-btn" onclick="minimizeWin()">─</button>
+    <button class="titlebar-btn close" onclick="window.close()">✕</button>
   </div>
 </div>
 
-<div class="app">
-  <div class="sidebar">
-    <div class="sidebar-logo">GTA5RP Helper</div>
-    <div class="sidebar-sub">Business Assistant</div>
+<div class="app-container">
 
-    <div class="nav-item active" data-tab="ems" onclick="switchTab('ems')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v8m0 0v8m0-8h8m-8 0H4"/></svg>
-      EMS Трекер
+  <!-- ═══ MAIN PAGE ═══ -->
+  <div class="page active" id="page-main">
+    <div class="main-page">
+      <div class="main-logo">2Helper</div>
+      <div class="grid">
+        <div class="grid-item" onclick="openPage('ems')"><div class="grid-icon">🏥</div><div class="grid-label">EMS Трекер</div></div>
+        <div class="grid-item" onclick="openPage('resale')"><div class="grid-icon">💰</div><div class="grid-label">Перекуп</div></div>
+        <div class="grid-item" onclick="openPage('work')"><div class="grid-icon">💼</div><div class="grid-label">Работа</div></div>
+        <div class="grid-item" onclick="openPage('skills')"><div class="grid-icon">⭐</div><div class="grid-label">Навыки</div></div>
+        <div class="grid-item" onclick="openPage('bp')"><div class="grid-icon">🎯</div><div class="grid-label">BP Задания</div></div>
+        <div class="grid-item" onclick="openPage('antiafk')"><div class="grid-icon">🖥️</div><div class="grid-label">Анти АФК</div></div>
+        <div class="grid-item" onclick="openPage('autokpk')"><div class="grid-icon">📱</div><div class="grid-label">Авто КПК</div></div>
+        <div class="grid-item" onclick="openPage('settings')"><div class="grid-icon">⚙️</div><div class="grid-label">Настройки</div></div>
+      </div>
     </div>
-    <div class="nav-item" data-tab="resale" onclick="switchTab('resale')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-      Перекуп
+    <div class="social-btns">
+      <div class="side-btn" title="Telegram">📨</div>
+      <div class="side-btn" title="Discord">💬</div>
     </div>
-    <div class="nav-item" data-tab="work" onclick="switchTab('work')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-      Работа / Доход
+    <div class="side-btns">
+      <div class="side-btn" onclick="openPage('skills')" title="Навыки">⭐</div>
+      <div class="side-btn" onclick="openPage('bp')" title="BP">🎯</div>
+      <div class="side-btn" onclick="openPage('ems')" title="EMS">🏥</div>
+      <div class="side-btn" onclick="openPage('resale')" title="Перекуп">💰</div>
     </div>
-    <div class="nav-item" data-tab="skills" onclick="switchTab('skills')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-      Навыки
-    </div>
-    <div class="nav-item" data-tab="bp" onclick="switchTab('bp')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-      BP Задания
-    </div>
-    <div class="nav-item" data-tab="settings" onclick="switchTab('settings')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-      Настройки
-    </div>
-
-    <div class="nav-spacer"></div>
-    <div class="nav-version">v1.0.0 by Firma</div>
   </div>
 
-  <div class="content">
-
-    <!-- ═══ EMS TAB ═══ -->
-    <div class="tab active" id="tab-ems">
-      <h2>EMS Трекер</h2>
-      <p class="subtitle">Отслеживай ПМП, осмотры и уколы за смену</p>
-
-      <div class="card" id="ems-session-card">
-        <div class="card-title">Текущая смена</div>
-        <div id="ems-session-status">
-          <span class="session-badge inactive">Нет активной смены</span>
-          <div style="margin-top:14px">
-            <button class="btn btn-accent" onclick="emsStartSession()">Начать смену</button>
-          </div>
-        </div>
-      </div>
-
+  <!-- ═══ EMS PAGE ═══ -->
+  <div class="page" id="page-ems">
+    <div class="sub-header"><button class="back-btn" onclick="openPage('main')">← Главная</button><span class="sub-title">🏥 EMS Трекер</span></div>
+    <div class="sub-content">
+      <div class="card"><div class="card-title">Текущая смена</div><div id="ems-session-status"><span class="session-badge inactive">Нет активной смены</span><div style="margin-top:12px"><button class="btn btn-accent" onclick="emsStartSession()">Начать смену</button></div></div></div>
       <div id="ems-active-panel" style="display:none">
         <div class="stats-grid">
           <div class="stat-box"><div class="stat-value green" id="ems-total-profit">$0</div><div class="stat-label">Заработок</div></div>
           <div class="stat-box"><div class="stat-value accent" id="ems-total-actions">0</div><div class="stat-label">Действий</div></div>
-          <div class="stat-box"><div class="stat-value yellow" id="ems-session-time">00:00:00</div><div class="stat-label">Время смены</div></div>
+          <div class="stat-box"><div class="stat-value yellow" id="ems-session-time">00:00:00</div><div class="stat-label">Время</div></div>
         </div>
-
         <div class="progress-bar"><div class="progress-fill" id="ems-progress" style="width:0%"></div></div>
-
         <div class="ems-actions">
-          <div class="ems-action-btn" onclick="emsAction('pmp')">
-            <div class="ems-action-name">ПМП</div>
-            <div class="ems-action-price">$1 980 / чел. (+20%)</div>
-            <div class="ems-action-count" id="ems-pmp-count">0</div>
-            <div class="ems-action-total" id="ems-pmp-total">$0</div>
-            <div class="ems-minus" onclick="event.stopPropagation();emsRemoveAction('pmp')">−</div>
-          </div>
-          <div class="ems-action-btn" onclick="emsAction('osmotr')">
-            <div class="ems-action-name">Мед. осмотр</div>
-            <div class="ems-action-price">$226 / чел. (+20%)</div>
-            <div class="ems-action-count" id="ems-osmotr-count">0</div>
-            <div class="ems-action-total" id="ems-osmotr-total">$0</div>
-            <div class="ems-minus" onclick="event.stopPropagation();emsRemoveAction('osmotr')">−</div>
-          </div>
-          <div class="ems-action-btn" onclick="emsAction('ukol')">
-            <div class="ems-action-name">Укол от нарко</div>
-            <div class="ems-action-price">$3 600 (прибыль $1 980)</div>
-            <div class="ems-action-count" id="ems-ukol-count">0</div>
-            <div class="ems-action-total" id="ems-ukol-total">$0</div>
-            <div class="ems-minus" onclick="event.stopPropagation();emsRemoveAction('ukol')">−</div>
-          </div>
+          <div class="ems-action-btn" onclick="emsAction('pmp')"><div class="ems-action-name">ПМП</div><div class="ems-action-price">$1 980 (+20%)</div><div class="ems-action-count" id="ems-pmp-count">0</div><div class="ems-action-total" id="ems-pmp-total">$0</div><div class="ems-minus" onclick="event.stopPropagation();emsRemoveAction('pmp')">−</div></div>
+          <div class="ems-action-btn" onclick="emsAction('osmotr')"><div class="ems-action-name">Мед. осмотр</div><div class="ems-action-price">$226 (+20%)</div><div class="ems-action-count" id="ems-osmotr-count">0</div><div class="ems-action-total" id="ems-osmotr-total">$0</div><div class="ems-minus" onclick="event.stopPropagation();emsRemoveAction('osmotr')">−</div></div>
+          <div class="ems-action-btn" onclick="emsAction('ukol')"><div class="ems-action-name">Укол от нарко</div><div class="ems-action-price">$3 600 (приб. $1 980)</div><div class="ems-action-count" id="ems-ukol-count">0</div><div class="ems-action-total" id="ems-ukol-total">$0</div><div class="ems-minus" onclick="event.stopPropagation();emsRemoveAction('ukol')">−</div></div>
         </div>
         <button class="btn btn-red" onclick="emsEndSession()">Завершить смену</button>
       </div>
-
-      <div class="card" style="margin-top:20px">
-        <div class="card-title">Статистика за всё время</div>
-        <div class="stats-grid" id="ems-alltime-grid">
-          <div class="stat-box"><div class="stat-value green" id="ems-at-profit">$0</div><div class="stat-label">Всего заработано</div></div>
+      <div class="card" style="margin-top:16px"><div class="card-title">Статистика за всё время</div>
+        <div class="stats-grid">
+          <div class="stat-box"><div class="stat-value green" id="ems-at-profit">$0</div><div class="stat-label">Заработано</div></div>
           <div class="stat-box"><div class="stat-value accent" id="ems-at-pmp">0</div><div class="stat-label">ПМП</div></div>
           <div class="stat-box"><div class="stat-value accent" id="ems-at-osmotr">0</div><div class="stat-label">Осмотры</div></div>
           <div class="stat-box"><div class="stat-value accent" id="ems-at-ukol">0</div><div class="stat-label">Уколы</div></div>
@@ -457,792 +240,245 @@ input::placeholder { color: var(--text2); }
           <div class="stat-box"><div class="stat-value yellow" id="ems-at-time">0ч</div><div class="stat-label">Время</div></div>
         </div>
       </div>
-
-      <div class="card">
-        <div class="card-title">История смен</div>
-        <div id="ems-history"></div>
-      </div>
+      <div class="card"><div class="card-title">История смен</div><div id="ems-history"></div></div>
     </div>
+  </div>
 
-    <!-- ═══ RESALE TAB ═══ -->
-    <div class="tab" id="tab-resale">
-      <h2>Перекуп Калькулятор</h2>
-      <p class="subtitle">Считай прибыль, веди инвентарь</p>
-
-      <div class="card">
-        <div class="card-title">Быстрый расчёт</div>
+  <!-- ═══ RESALE PAGE ═══ -->
+  <div class="page" id="page-resale">
+    <div class="sub-header"><button class="back-btn" onclick="openPage('main')">← Главная</button><span class="sub-title">💰 Перекуп Калькулятор</span></div>
+    <div class="sub-content">
+      <div class="card"><div class="card-title">Быстрый расчёт</div>
         <div class="input-row">
-          <div class="input-group" style="flex:1"><label>Цена покупки</label><input type="number" id="calc-buy" placeholder="500 000"></div>
-          <div class="input-group" style="flex:1"><label>Цена продажи</label><input type="number" id="calc-sell" placeholder="750 000"></div>
-          <div class="input-group" style="width:120px"><label>Комиссия %</label><input type="number" id="calc-commission" value="3" step="0.5"></div>
-          <div class="input-group" style="flex:1"><label>Расходы</label><input type="number" id="calc-expenses" placeholder="0" value="0"></div>
+          <div class="input-group" style="flex:1"><label>Покупка</label><input type="number" id="calc-buy" placeholder="500000"></div>
+          <div class="input-group" style="flex:1"><label>Продажа</label><input type="number" id="calc-sell" placeholder="750000"></div>
+          <div class="input-group" style="width:100px"><label>Комиссия %</label><input type="number" id="calc-commission" value="3"></div>
+          <div class="input-group" style="flex:1"><label>Расходы</label><input type="number" id="calc-expenses" value="0"></div>
         </div>
-        <button class="btn btn-accent" onclick="calcResale()" style="margin-top:4px">Рассчитать</button>
+        <button class="btn btn-accent" onclick="calcResale()">Рассчитать</button>
         <div class="calc-result" id="calc-result" style="display:none"></div>
       </div>
-
-      <div class="card">
-        <div class="card-title" style="justify-content:space-between">
-          Инвентарь
-          <button class="btn btn-accent btn-sm" onclick="showAddItemModal()">+ Добавить</button>
-        </div>
-        <div class="inv-grid" id="inv-grid"></div>
-        <div id="inv-empty" style="text-align:center;color:var(--text2);padding:24px;font-size:13px;opacity:.6">Инвентарь пуст — добавь первый предмет</div>
-      </div>
-
-      <div class="card">
-        <div class="card-title" style="justify-content:space-between">
-          Транзакции перекупа
-          <div id="resale-totals" style="font-size:13px"></div>
-        </div>
-        <div class="tx-list" id="resale-tx-list"></div>
-      </div>
+      <div class="card"><div class="card-title" style="justify-content:space-between">Инвентарь<button class="btn btn-accent btn-sm" onclick="showAddItemModal()">+ Добавить</button></div><div class="inv-grid" id="inv-grid"></div><div id="inv-empty" style="text-align:center;color:var(--text2);padding:20px;font-size:12px">Пусто</div></div>
+      <div class="card"><div class="card-title" style="justify-content:space-between">Транзакции<div id="resale-totals" style="font-size:12px"></div></div><div class="tx-list" id="resale-tx-list"></div></div>
     </div>
+  </div>
 
-    <!-- ═══ WORK TAB ═══ -->
-    <div class="tab" id="tab-work">
-      <h2>Трекер Заработка</h2>
-      <p class="subtitle">Записывай доход с любой работы</p>
-
+  <!-- ═══ WORK PAGE ═══ -->
+  <div class="page" id="page-work">
+    <div class="sub-header"><button class="back-btn" onclick="openPage('main')">← Главная</button><span class="sub-title">💼 Трекер Заработка</span></div>
+    <div class="sub-content">
       <div class="stats-grid">
         <div class="stat-box"><div class="stat-value green" id="work-income">$0</div><div class="stat-label">Доход</div></div>
         <div class="stat-box"><div class="stat-value red" id="work-expense">$0</div><div class="stat-label">Расход</div></div>
         <div class="stat-box"><div class="stat-value accent" id="work-balance">$0</div><div class="stat-label">Баланс</div></div>
       </div>
-
-      <div class="card">
-        <div class="card-title">Новая запись</div>
+      <div class="card"><div class="card-title">Новая запись</div>
         <div class="input-row">
-          <div class="input-group" style="flex:1"><label>Сумма (+ доход, − расход)</label><input type="number" id="work-amount" placeholder="50000"></div>
-          <div class="input-group" style="flex:2"><label>Комментарий</label><input type="text" id="work-comment" placeholder="Газонокосилка за час"></div>
+          <div class="input-group" style="flex:1"><label>Сумма</label><input type="number" id="work-amount" placeholder="50000"></div>
+          <div class="input-group" style="flex:2"><label>Комментарий</label><input type="text" id="work-comment" placeholder="Работа за час"></div>
         </div>
         <div class="work-selector">
-          <div class="work-chip" onclick="setWorkPreset('Шахта',0)">Шахта</div>
-          <div class="work-chip" onclick="setWorkPreset('Стройка',0)">Стройка</div>
-          <div class="work-chip" onclick="setWorkPreset('Порт',0)">Порт</div>
-          <div class="work-chip" onclick="setWorkPreset('Ферма',0)">Ферма</div>
-          <div class="work-chip" onclick="setWorkPreset('Такси',0)">Такси</div>
-          <div class="work-chip" onclick="setWorkPreset('Автобус',0)">Автобус</div>
-          <div class="work-chip" onclick="setWorkPreset('Дайвинг',0)">Дайвинг</div>
-          <div class="work-chip" onclick="setWorkPreset('Механик',0)">Механик</div>
-          <div class="work-chip" onclick="setWorkPreset('Инкассатор',0)">Инкассатор</div>
-          <div class="work-chip" onclick="setWorkPreset('Дальнобой',0)">Дальнобой</div>
-          <div class="work-chip" onclick="setWorkPreset('Почта/Курьер',0)">Почта</div>
-          <div class="work-chip" onclick="setWorkPreset('Пожарный',0)">Пожарный</div>
-          <div class="work-chip" onclick="setWorkPreset('Охота',0)">Охота</div>
-          <div class="work-chip" onclick="setWorkPreset('Сокровища',0)">Сокровища</div>
+          <div class="work-chip" onclick="setWorkPreset('Шахта',0)">Шахта</div><div class="work-chip" onclick="setWorkPreset('Стройка',0)">Стройка</div><div class="work-chip" onclick="setWorkPreset('Порт',0)">Порт</div><div class="work-chip" onclick="setWorkPreset('Ферма',0)">Ферма</div><div class="work-chip" onclick="setWorkPreset('Такси',0)">Такси</div><div class="work-chip" onclick="setWorkPreset('Автобус',0)">Автобус</div><div class="work-chip" onclick="setWorkPreset('Дайвинг',0)">Дайвинг</div><div class="work-chip" onclick="setWorkPreset('Механик',0)">Механик</div><div class="work-chip" onclick="setWorkPreset('Инкассатор',0)">Инкассатор</div><div class="work-chip" onclick="setWorkPreset('Дальнобой',0)">Дальнобой</div><div class="work-chip" onclick="setWorkPreset('Почта',0)">Почта</div><div class="work-chip" onclick="setWorkPreset('Пожарный',0)">Пожарный</div>
         </div>
         <button class="btn btn-green" onclick="addWorkTx()">Добавить</button>
       </div>
-
-      <div class="card">
-        <div class="card-title">История</div>
-        <div class="tx-list" id="work-tx-list"></div>
-      </div>
+      <div class="card"><div class="card-title">История</div><div class="tx-list" id="work-tx-list"></div></div>
     </div>
+  </div>
 
-    <!-- ═══ SKILLS TAB ═══ -->
-    <div class="tab" id="tab-skills">
-      <h2>Таблица навыков</h2>
-      <p class="subtitle">Время прокачки профессий по уровням</p>
-
-      <div style="display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap">
+  <!-- ═══ SKILLS PAGE ═══ -->
+  <div class="page" id="page-skills">
+    <div class="sub-header"><button class="back-btn" onclick="openPage('main')">← Главная</button><span class="sub-title">⭐ Таблица навыков</span>
+      <div style="margin-left:auto;display:flex;gap:6px">
         <button class="btn btn-sm" id="sk-mode-time" onclick="setSkillMode('time')" style="background:var(--accent)">Время</button>
         <button class="btn btn-sm btn-ghost" id="sk-mode-plat" onclick="setSkillMode('plat')">Platinum VIP</button>
         <button class="btn btn-sm btn-ghost" id="sk-mode-all" onclick="setSkillMode('all')">Все</button>
       </div>
-
+    </div>
+    <div class="sub-content">
       <div class="card" style="padding:0;overflow-x:auto">
-        <table style="width:100%;border-collapse:collapse;font-size:12px">
-          <thead>
-            <tr style="border-bottom:1px solid var(--border);color:var(--text2);text-transform:uppercase;font-size:10px;letter-spacing:.5px">
-              <th style="padding:14px 16px;text-align:left">Профессия</th>
-              <th style="padding:14px 8px;text-align:center">Ур. 1</th>
-              <th style="padding:14px 8px;text-align:center">Ур. 2</th>
-              <th style="padding:14px 8px;text-align:center">Ур. 3</th>
-              <th style="padding:14px 8px;text-align:center">Ур. 4</th>
-              <th style="padding:14px 8px;text-align:center">Ур. 5</th>
-              <th style="padding:14px 8px;text-align:center">$/очко</th>
-              <th style="padding:14px 8px;text-align:center">До 5 ур.</th>
-            </tr>
-          </thead>
-          <tbody id="skills-tbody"></tbody>
-        </table>
-      </div>
-
-      <div class="card" style="padding:0;overflow-x:auto;margin-top:4px">
-        <div style="padding:14px 16px;font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border)">Рыбалка</div>
-        <table style="width:100%;border-collapse:collapse;font-size:12px">
-          <thead>
-            <tr style="border-bottom:1px solid var(--border);color:var(--text2);font-size:10px">
-              <th style="padding:12px 16px;text-align:left">Профессия</th>
-              <th style="padding:12px 8px;text-align:center">Ур. 1</th>
-              <th style="padding:12px 8px;text-align:center">Ур. 2</th>
-              <th style="padding:12px 8px;text-align:center">Ур. 3</th>
-              <th style="padding:12px 8px;text-align:center">Ур. 4</th>
-              <th style="padding:12px 8px;text-align:center">Ур. 5</th>
-              <th style="padding:12px 8px;text-align:center">Ур. 6</th>
-              <th style="padding:12px 8px;text-align:center">$/очко</th>
-              <th style="padding:12px 8px;text-align:center">До 6 ур.</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr id="fish-row" style="border-bottom:1px solid var(--border)">
-              <td style="padding:12px 16px;font-weight:600">🎣 Рыбалка</td>
-              <td style="padding:12px 8px;text-align:center">4ч 10м</td>
-              <td style="padding:12px 8px;text-align:center">12ч 31м</td>
-              <td style="padding:12px 8px;text-align:center">33м 24с</td>
-              <td style="padding:12px 8px;text-align:center">1ч 06м</td>
-              <td style="padding:12px 8px;text-align:center">1ч 40м</td>
-              <td style="padding:12px 8px;text-align:center;color:var(--accent)">2ч 47м</td>
-              <td style="padding:12px 8px;text-align:center">0:00:10</td>
-              <td style="padding:12px 8px;text-align:center;color:var(--yellow)">6ч 24м</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="card" style="padding:0;overflow-x:auto;margin-top:4px">
-        <div style="padding:14px 16px;font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border)">Стрельба</div>
-        <table style="width:100%;border-collapse:collapse;font-size:12px">
-          <thead>
-            <tr style="border-bottom:1px solid var(--border);color:var(--text2);font-size:10px">
-              <th style="padding:12px 16px;text-align:left">Профессия</th>
-              <th style="padding:12px 8px;text-align:center">Ур. 1-5</th>
-              <th style="padding:12px 8px;text-align:center">Ур. 6-9</th>
-              <th style="padding:12px 8px;text-align:center">Ур. 10</th>
-              <th style="padding:12px 8px;text-align:center">$/очко</th>
-              <th style="padding:12px 8px;text-align:center">До 10 ур.</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr id="shoot-row">
-              <td style="padding:12px 16px;font-weight:600">🔫 Стрельба</td>
-              <td style="padding:12px 8px;text-align:center">3ч 45м</td>
-              <td style="padding:12px 8px;text-align:center">11ч 15м</td>
-              <td style="padding:12px 8px;text-align:center">15ч 00м</td>
-              <td style="padding:12px 8px;text-align:center">0:45:00</td>
-              <td style="padding:12px 8px;text-align:center;color:var(--yellow)">78ч 45м</td>
-            </tr>
-          </tbody>
-        </table>
+        <table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr id="sk-thead" style="border-bottom:1px solid var(--border);color:var(--text2);font-size:10px;text-transform:uppercase;letter-spacing:.5px"></tr></thead><tbody id="skills-tbody"></tbody></table>
       </div>
     </div>
+  </div>
 
-    <!-- ═══ BP TAB ═══ -->
-    <div class="tab" id="tab-bp">
-      <h2>Бонус Поинты</h2>
-      <p class="subtitle">Ежедневные задания для прокачки</p>
-
+  <!-- ═══ BP PAGE ═══ -->
+  <div class="page" id="page-bp">
+    <div class="sub-header"><button class="back-btn" onclick="openPage('main')">← Главная</button><span class="sub-title">🎯 Бонус Поинты</span></div>
+    <div class="sub-content">
       <div class="card" style="display:flex;align-items:center;gap:20px">
-        <div style="width:60px;height:60px;border-radius:14px;background:linear-gradient(135deg,#f5a623,#f57723);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:#fff;flex-shrink:0">BP</div>
-        <div>
-          <div style="font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:1px">Бонус Поинты</div>
-          <div style="font-size:32px;font-weight:800;color:var(--accent)" id="bp-earned">0 BP</div>
-        </div>
-        <div style="margin-left:auto;display:flex;gap:8px">
-          <button class="btn btn-sm" id="bp-vip-btn" onclick="toggleBpVip()" style="background:var(--bg4);border:1px solid var(--border)">Gold / Platinum VIP</button>
-          <button class="btn btn-sm" id="bp-x2-btn" onclick="toggleBpX2()" style="background:var(--bg4);border:1px solid var(--border)">x2 Сервер</button>
+        <div style="width:56px;height:56px;border-radius:14px;background:linear-gradient(135deg,#f5a623,#f57723);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:#fff;flex-shrink:0">BP</div>
+        <div><div style="font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:1px">Бонус Поинты</div><div style="font-size:28px;font-weight:800;color:var(--accent)" id="bp-earned">0 BP</div></div>
+        <div style="margin-left:auto;display:flex;gap:6px">
+          <button class="btn btn-sm btn-ghost" id="bp-vip-btn" onclick="toggleBpVip()">Gold / Platinum VIP</button>
+          <button class="btn btn-sm btn-ghost" id="bp-x2-btn" onclick="toggleBpX2()">x2 Сервер</button>
         </div>
       </div>
-
-      <div class="card">
-        <div style="margin-bottom:14px">
-          <input type="text" id="bp-search" placeholder="Поиск по заданиям..." oninput="filterBpTasks()" style="font-size:12px">
-        </div>
-        <div id="bp-task-list"></div>
-        <div style="display:flex;gap:10px;margin-top:16px">
+      <div class="card"><input type="text" id="bp-search" placeholder="Поиск по заданиям..." oninput="filterBpTasks()" style="font-size:12px;margin-bottom:14px"><div id="bp-task-list"></div>
+        <div style="display:flex;gap:8px;margin-top:16px">
           <button class="btn btn-accent" onclick="showAddBpModal()">+ Добавить</button>
           <button class="btn btn-ghost" onclick="bpDeleteDone()">🗑 Удалить</button>
           <button class="btn btn-ghost" onclick="bpResetAll()">↻ Сбросить</button>
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- BP Add Modal -->
-    <div class="modal-overlay" id="bp-add-modal">
-      <div class="modal">
-        <div class="modal-title">Добавить задание</div>
-        <div class="input-group"><label>Текст задания</label><input type="text" id="bp-task-text" placeholder="Описание задания"></div>
-        <div class="input-group"><label>BP за выполнение</label><input type="number" id="bp-task-value" value="2" min="1"></div>
-        <div style="display:flex;gap:8px;margin-top:14px">
-          <button class="btn btn-accent" onclick="confirmAddBpTask()">Добавить</button>
-          <button class="btn btn-ghost" onclick="closeBpModal()">Отмена</button>
+  <!-- ═══ ANTI-AFK PAGE ═══ -->
+  <div class="page" id="page-antiafk">
+    <div class="sub-header"><button class="back-btn" onclick="openPage('main')">← Главная</button><span class="sub-title">🖥️ Анти АФК</span></div>
+    <div class="sub-content">
+      <div class="card"><div class="card-title">Настройки</div>
+        <div class="input-group"><label>Интервал (секунды)</label><input type="number" id="afk-interval" value="120" min="30" max="600"></div>
+        <div style="display:flex;gap:12px;margin-top:8px">
+          <button class="btn btn-green" id="afk-start-btn" onclick="toggleAfk()">▶ Запустить</button>
         </div>
+        <div style="margin-top:14px"><span class="session-badge inactive" id="afk-status">Остановлен</span></div>
+        <div style="margin-top:10px;font-size:11px;color:var(--text2)" id="afk-log">Тиков: 0</div>
       </div>
+      <div class="card"><div class="card-title">Как работает</div><p style="font-size:12px;color:var(--text2);line-height:1.6">Каждые N секунд двигает мышь на 1-5px или нажимает Shift/Ctrl чтобы сервер не кикнул за бездействие. Запускать только на Windows с pip install pydirectinput.</p></div>
     </div>
+  </div>
 
-    <!-- ═══ SETTINGS TAB ═══ -->
-    <div class="tab" id="tab-settings">
-      <h2>Настройки</h2>
-      <p class="subtitle">Конфигурация и уведомления</p>
-
-      <div class="card">
-        <div class="card-title">
-          <svg viewBox="0 0 24 24" fill="none" stroke="#5865F2" stroke-width="2" style="width:18px;height:18px"><path d="M9 12h6m-3-3v6"/><circle cx="12" cy="12" r="10"/></svg>
-          Discord Уведомления
+  <!-- ═══ AUTO-KPK PAGE ═══ -->
+  <div class="page" id="page-autokpk">
+    <div class="sub-header"><button class="back-btn" onclick="openPage('main')">← Главная</button><span class="sub-title">📱 Авто КПК</span></div>
+    <div class="sub-content">
+      <div class="card"><div class="card-title">Режим</div>
+        <div style="display:flex;gap:10px;margin-bottom:14px">
+          <button class="btn btn-accent" id="kpk-ems-btn" onclick="setKpkMode('ems')">🏥 EMS</button>
+          <button class="btn btn-ghost" id="kpk-taxi-btn" onclick="setKpkMode('taxi')">🚕 Такси</button>
         </div>
-        <p style="font-size:11px;color:var(--text2);margin-bottom:14px;line-height:1.5">
-          Уведомления приходят при завершении EMS смены и продаже товара.<br>
-          Discord → Настройки канала → Интеграции → Webhooks → Скопировать URL
-        </p>
-        <div class="input-group">
-          <label>Webhook URL</label>
-          <input type="text" id="discord-webhook" placeholder="https://discord.com/api/webhooks/...">
+        <p style="font-size:11px;color:var(--text2);line-height:1.5" id="kpk-desc">EMS: Стрелка вверх (телефон) → Medical Services → Принять вызов</p>
+        <div style="margin-top:14px;display:flex;gap:12px">
+          <button class="btn btn-green" id="kpk-start-btn" onclick="toggleKpk()">▶ Запустить</button>
         </div>
-        <div style="display:flex;gap:8px;align-items:center">
-          <button class="btn btn-accent btn-sm" onclick="saveWebhook()">Сохранить</button>
-          <button class="btn btn-ghost btn-sm" onclick="testWebhook()">Тест</button>
-          <span id="webhook-status" style="font-size:11px;margin-left:8px"></span>
-        </div>
+        <div style="margin-top:14px"><span class="session-badge inactive" id="kpk-status">Остановлен</span></div>
+        <div style="margin-top:10px;font-size:11px;color:var(--text2)" id="kpk-log">Вызовов принято: 0</div>
       </div>
-
-      <div class="card">
-        <div class="card-title">Данные</div>
-        <div style="display:flex;gap:12px;flex-wrap:wrap">
-          <button class="btn btn-accent" onclick="exportData()">Экспорт JSON</button>
-          <button class="btn btn-red" onclick="clearAllData()">Очистить все данные</button>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-title">О программе</div>
-        <p style="font-size:12px;color:var(--text2);line-height:1.7">
-          GTA5RP Helper — универсальный помощник для предпринимателей.<br>
-          EMS трекер • Перекуп калькулятор • Трекер заработка • Discord уведомления<br><br>
-          <span style="color:var(--accent);font-weight:600">v1.0.0</span> • by Firma
-        </p>
-      </div>
+      <div class="card"><div class="card-title">Как работает</div><p style="font-size:12px;color:var(--text2);line-height:1.6"><b>EMS:</b> Нажимает ↑ (открыть телефон) → кликает Medical Services → принимает вызов.<br><b>Такси:</b> Аналогично через меню такси.<br><br>Требует запущенную игру и pip install pydirectinput pyautogui.</p></div>
     </div>
+  </div>
 
+  <!-- ═══ SETTINGS PAGE ═══ -->
+  <div class="page" id="page-settings">
+    <div class="sub-header"><button class="back-btn" onclick="openPage('main')">← Главная</button><span class="sub-title">⚙️ Настройки</span></div>
+    <div class="sub-content">
+      <div class="card"><div class="card-title">💬 Discord Уведомления</div>
+        <p style="font-size:11px;color:var(--text2);margin-bottom:12px">Уведомления при завершении смены EMS и продаже товара.</p>
+        <div class="input-group"><label>Webhook URL</label><input type="text" id="discord-webhook" placeholder="https://discord.com/api/webhooks/..."></div>
+        <div style="display:flex;gap:8px;align-items:center"><button class="btn btn-accent btn-sm" onclick="saveWebhook()">Сохранить</button><button class="btn btn-ghost btn-sm" onclick="testWebhook()">Тест</button><span id="webhook-status" style="font-size:11px;margin-left:8px"></span></div>
+      </div>
+      <div class="card"><div class="card-title">Данные</div><div style="display:flex;gap:12px"><button class="btn btn-accent" onclick="exportData()">Экспорт JSON</button><button class="btn btn-red" onclick="clearAllData()">Очистить всё</button></div></div>
+      <div class="card"><div class="card-title">О программе</div><p style="font-size:12px;color:var(--text2);line-height:1.6">2Helper — универсальный помощник для GTA5 RP<br><span style="color:var(--accent);font-weight:600">v1.1.0</span> • by Firma</p></div>
+    </div>
+  </div>
+
+  <div class="status-bar">
+    <span><span class="status-dot offline" id="game-dot"></span> <span id="game-status">Игра не найдена</span></span>
+    <span>v1.1.0</span>
   </div>
 </div>
 
-<!-- Sell Modal -->
-<div class="modal-overlay" id="sell-modal">
-  <div class="modal">
-    <div class="modal-title">Продать предмет</div>
-    <div id="sell-item-name" style="font-size:13px;color:var(--text2);margin-bottom:14px"></div>
-    <div class="input-group"><label>Цена продажи</label><input type="number" id="sell-price" placeholder="0"></div>
-    <div style="display:flex;gap:8px;margin-top:14px">
-      <button class="btn btn-green" onclick="confirmSell()">Продать</button>
-      <button class="btn btn-ghost" onclick="closeSellModal()">Отмена</button>
-    </div>
-  </div>
-</div>
-
-<!-- Add Item Modal -->
-<div class="modal-overlay" id="add-item-modal">
-  <div class="modal">
-    <div class="modal-title">Добавить в инвентарь</div>
-    <div class="input-group"><label>Название</label><input type="text" id="item-name" placeholder="Sultan RS"></div>
-    <div class="input-group"><label>Цена покупки</label><input type="number" id="item-price" placeholder="500000"></div>
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
-      <input type="checkbox" id="item-link-calc" checked style="width:auto;accent-color:var(--accent)">
-      <label for="item-link-calc" style="font-size:12px;color:var(--text2);cursor:pointer">Записать как расход в калькулятор</label>
-    </div>
-    <div style="display:flex;gap:8px">
-      <button class="btn btn-accent" onclick="confirmAddItem()">Добавить</button>
-      <button class="btn btn-ghost" onclick="closeAddItemModal()">Отмена</button>
-    </div>
-  </div>
-</div>
-
-<!-- Success Popup (Sale) -->
-<div class="success-overlay" id="success-overlay">
-  <div class="success-box">
-    <div class="success-icon">&#127881;</div>
-    <div class="success-title">ПРОДАНО!</div>
-    <div class="success-profit" id="success-profit"></div>
-    <div class="success-detail" id="success-detail"></div>
-    <button class="btn btn-ghost" style="margin-top:18px" onclick="closeSuccess()">Закрыть</button>
-  </div>
-</div>
-
-<div class="confetti-container" id="confetti-container"></div>
+<!-- Modals -->
+<div class="modal-overlay" id="sell-modal"><div class="modal"><div style="font-size:16px;font-weight:700;margin-bottom:16px">Продать</div><div id="sell-item-name" style="font-size:13px;color:var(--text2);margin-bottom:12px"></div><div class="input-group"><label>Цена продажи</label><input type="number" id="sell-price" placeholder="0"></div><div style="display:flex;gap:8px;margin-top:12px"><button class="btn btn-green" onclick="confirmSell()">Продать</button><button class="btn btn-ghost" onclick="closeSellModal()">Отмена</button></div></div></div>
+<div class="modal-overlay" id="add-item-modal"><div class="modal"><div style="font-size:16px;font-weight:700;margin-bottom:16px">Добавить в инвентарь</div><div class="input-group"><label>Название</label><input type="text" id="item-name" placeholder="Sultan RS"></div><div class="input-group"><label>Цена покупки</label><input type="number" id="item-price" placeholder="500000"></div><div style="display:flex;align-items:center;gap:8px;margin-bottom:12px"><input type="checkbox" id="item-link-calc" checked style="width:auto;accent-color:var(--accent)"><label for="item-link-calc" style="font-size:12px;color:var(--text2);cursor:pointer">Как расход в калькулятор</label></div><div style="display:flex;gap:8px"><button class="btn btn-accent" onclick="confirmAddItem()">Добавить</button><button class="btn btn-ghost" onclick="closeAddItemModal()">Отмена</button></div></div></div>
+<div class="modal-overlay" id="bp-add-modal"><div class="modal"><div style="font-size:16px;font-weight:700;margin-bottom:16px">Добавить задание</div><div class="input-group"><label>Текст</label><input type="text" id="bp-task-text" placeholder="Описание"></div><div class="input-group"><label>BP</label><input type="number" id="bp-task-value" value="2" min="1"></div><div style="display:flex;gap:8px;margin-top:12px"><button class="btn btn-accent" onclick="confirmAddBpTask()">Добавить</button><button class="btn btn-ghost" onclick="closeBpModal()">Отмена</button></div></div></div>
 
 <script>
-let activeSession = null, sessionTimer = null, sellItemId = null, sellItemBuyPrice = 0;
-const $ = id => document.getElementById(id);
-const api = () => window.pywebview ? window.pywebview.api : null;
-const fmt = n => { const s = Math.abs(Math.round(n)).toLocaleString('ru-RU'); return n < 0 ? `-$${s}` : `$${s}`; };
-const fmtDate = iso => { if (!iso) return ''; const d = new Date(iso); return d.toLocaleDateString('ru-RU',{day:'2-digit',month:'2-digit'})+' '+d.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}); };
-const esc = s => { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; };
+let activeSession=null,sessionTimer=null,sellItemId=null,sellItemBuyPrice=0;
+const $=id=>document.getElementById(id);
+const api=()=>window.pywebview?window.pywebview.api:null;
+const fmt=n=>{const s=Math.abs(Math.round(n)).toLocaleString('ru-RU');return n<0?`-$${s}`:`$${s}`};
+const fmtDate=iso=>{if(!iso)return'';const d=new Date(iso);return d.toLocaleDateString('ru-RU',{day:'2-digit',month:'2-digit'})+' '+d.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'})};
+const esc=s=>{const d=document.createElement('div');d.textContent=s;return d.innerHTML};
 
-// ─── Button ripple ───
-document.addEventListener('mousemove', e => {
-  const btn = e.target.closest('.btn');
-  if (btn) { const r = btn.getBoundingClientRect(); btn.style.setProperty('--x', ((e.clientX-r.left)/r.width*100)+'%'); btn.style.setProperty('--y', ((e.clientY-r.top)/r.height*100)+'%'); }
-});
-
-// ─── Confetti ───
-function spawnConfetti() {
-  const c = $('confetti-container');
-  const colors = ['#7c5cfc','#3dd68c','#f5c542','#f5555d','#a78bfa','#5865F2','#fff'];
-  for (let i = 0; i < 60; i++) {
-    const el = document.createElement('div');
-    el.className = 'confetti';
-    el.style.cssText = `left:${Math.random()*100}%;top:${-10+Math.random()*20}%;background:${colors[Math.floor(Math.random()*colors.length)]};width:${4+Math.random()*8}px;height:${4+Math.random()*8}px;animation-delay:${Math.random()*.5}s;animation-duration:${1.5+Math.random()*1.5}s;border-radius:${Math.random()>.5?'50%':'2px'}`;
-    c.appendChild(el);
-  }
-  setTimeout(() => c.innerHTML = '', 3000);
+// ═══ NAVIGATION ═══
+function openPage(name) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  $('page-'+name).classList.add('active');
+  if(name==='ems')loadEmsData();
+  if(name==='resale'){loadInventory();loadResaleTx()}
+  if(name==='work')loadWorkData();
+  if(name==='skills')renderSkills();
+  if(name==='bp')loadBpTasks();
+  if(name==='settings')loadWebhook();
 }
-
-// ─── Tabs ───
-function switchTab(tab) {
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  $('tab-'+tab).classList.add('active');
-  document.querySelector(`.nav-item[data-tab="${tab}"]`).classList.add('active');
-  if (tab==='resale') { loadInventory(); loadResaleTx(); }
-  if (tab==='work') loadWorkData();
-  if (tab==='ems') loadEmsData();
-  if (tab==='skills') renderSkills();
-  if (tab==='bp') loadBpTasks();
-  if (tab==='settings') loadWebhook();
-}
+function minimizeWin(){if(window.pywebview)window.pywebview.api.minimize&&window.pywebview.api.minimize()}
 
 // ═══ EMS ═══
-async function loadEmsData() {
-  if (!api()) return;
-  activeSession = await api().ems_get_active_session();
-  if (activeSession) showActiveSession();
-  else {
-    $('ems-session-status').innerHTML = '<span class="session-badge inactive">Нет активной смены</span><div style="margin-top:14px"><button class="btn btn-accent" onclick="emsStartSession()">Начать смену</button></div>';
-    $('ems-active-panel').style.display = 'none';
-  }
-  loadEmsHistory();
-  loadEmsAlltime();
-}
-
-async function emsStartSession() {
-  if (!api()) return;
-  await api().ems_start_session('EMS');
-  activeSession = await api().ems_get_active_session();
-  showActiveSession(); loadEmsHistory();
-}
-
-function showActiveSession() {
-  $('ems-session-status').innerHTML = `<span class="session-badge active"><span class="pulse-dot"></span> Смена активна</span><span style="font-size:11px;color:var(--text2);margin-left:12px">Начало: ${fmtDate(activeSession.started_at)}</span>`;
-  $('ems-active-panel').style.display = 'block';
-  updateEmsStats(); startSessionTimer();
-}
-
-function startSessionTimer() {
-  if (sessionTimer) clearInterval(sessionTimer);
-  sessionTimer = setInterval(() => {
-    if (!activeSession) return;
-    const ms = Date.now() - new Date(activeSession.started_at).getTime();
-    const h=Math.floor(ms/3600000), m=Math.floor((ms%3600000)/60000), s=Math.floor((ms%60000)/1000);
-    $('ems-session-time').textContent = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
-    // Progress bar (goal: 50k per hour)
-    const hourlyGoal = 50000;
-    const elapsed = ms / 3600000;
-    const profit = parseFloat($('ems-total-profit').textContent.replace(/[^0-9]/g,'')) || 0;
-    const expected = hourlyGoal * elapsed;
-    const pct = expected > 0 ? Math.min((profit / expected) * 100, 100) : 0;
-    $('ems-progress').style.width = pct + '%';
-  }, 1000);
-}
-
-async function emsAction(type) {
-  if (!api() || !activeSession) return;
-  await api().ems_add_action(activeSession.id, type);
-  // Animate counter
-  const el = $('ems-'+type+'-count');
-  el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop');
-  updateEmsStats();
-  loadEmsAlltime();
-}
-
-async function emsRemoveAction(type) {
-  if (!api() || !activeSession) return;
-  await api().ems_remove_last_action(activeSession.id, type);
-  updateEmsStats();
-}
-
-async function updateEmsStats() {
-  if (!api() || !activeSession) return;
-  const stats = await api().ems_get_session_stats(activeSession.id);
-  const a = stats.actions;
-  const pmp = a.pmp||{count:0,total_profit:0}, osm = a.osmotr||{count:0,total_profit:0}, ukol = a.ukol||{count:0,total_profit:0};
-  $('ems-pmp-count').textContent = pmp.count;
-  $('ems-pmp-total').textContent = fmt(pmp.total_profit);
-  $('ems-osmotr-count').textContent = osm.count;
-  $('ems-osmotr-total').textContent = fmt(osm.total_profit);
-  $('ems-ukol-count').textContent = ukol.count;
-  $('ems-ukol-total').textContent = fmt(ukol.total_profit);
-  $('ems-total-profit').textContent = fmt(stats.total_profit);
-  $('ems-total-actions').textContent = pmp.count + osm.count + ukol.count;
-}
-
-async function emsEndSession() {
-  if (!api()) return;
-  await api().ems_end_session();
-  activeSession = null;
-  if (sessionTimer) clearInterval(sessionTimer);
-  loadEmsData();
-}
-
-async function loadEmsAlltime() {
-  if (!api()) return;
-  const s = await api().ems_get_alltime_stats();
-  const a = s.actions;
-  const pmp = a.pmp||{count:0,total_profit:0}, osm = a.osmotr||{count:0,total_profit:0}, ukol = a.ukol||{count:0,total_profit:0};
-  $('ems-at-profit').textContent = fmt(s.total_profit);
-  $('ems-at-pmp').textContent = pmp.count;
-  $('ems-at-osmotr').textContent = osm.count;
-  $('ems-at-ukol').textContent = ukol.count;
-  $('ems-at-sessions').textContent = s.session_count;
-  const hrs = Math.floor(s.total_time_seconds/3600);
-  const mins = Math.floor((s.total_time_seconds%3600)/60);
-  $('ems-at-time').textContent = hrs > 0 ? `${hrs}ч ${mins}м` : `${mins}м`;
-}
-
-async function loadEmsHistory() {
-  if (!api()) return;
-  const sessions = await api().ems_get_all_sessions();
-  const el = $('ems-history');
-  const done = sessions.filter(s => !s.is_active);
-  if (!done.length) { el.innerHTML = '<div style="color:var(--text2);font-size:12px;padding:12px;opacity:.6">Нет завершённых смен</div>'; return; }
-  el.innerHTML = done.map(s => `<div class="session-item"><span class="session-type">${s.work_type}</span><span style="color:var(--text2)">${fmtDate(s.started_at)}</span><span style="color:var(--text2);font-size:11px">${s.action_count} действий</span><span class="session-profit">${fmt(s.total_profit)}</span></div>`).join('');
-}
+async function loadEmsData(){if(!api())return;activeSession=await api().ems_get_active_session();if(activeSession)showActiveSession();else{$('ems-session-status').innerHTML='<span class="session-badge inactive">Нет активной смены</span><div style="margin-top:12px"><button class="btn btn-accent" onclick="emsStartSession()">Начать смену</button></div>';$('ems-active-panel').style.display='none'}loadEmsHistory();loadEmsAlltime()}
+async function emsStartSession(){if(!api())return;await api().ems_start_session('EMS');activeSession=await api().ems_get_active_session();showActiveSession();loadEmsHistory()}
+function showActiveSession(){$('ems-session-status').innerHTML=`<span class="session-badge active"><span class="pulse-dot"></span> Смена активна</span><span style="font-size:11px;color:var(--text2);margin-left:12px">${fmtDate(activeSession.started_at)}</span>`;$('ems-active-panel').style.display='block';updateEmsStats();startSessionTimer()}
+function startSessionTimer(){if(sessionTimer)clearInterval(sessionTimer);sessionTimer=setInterval(()=>{if(!activeSession)return;const ms=Date.now()-new Date(activeSession.started_at).getTime();const h=Math.floor(ms/3600000),m=Math.floor((ms%3600000)/60000),s=Math.floor((ms%60000)/1000);$('ems-session-time').textContent=`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;const profit=parseFloat($('ems-total-profit').textContent.replace(/[^0-9]/g,''))||0;const elapsed=ms/3600000;const pct=elapsed>0?Math.min((profit/(50000*elapsed))*100,100):0;$('ems-progress').style.width=pct+'%'},1000)}
+async function emsAction(type){if(!api()||!activeSession)return;await api().ems_add_action(activeSession.id,type);const el=$('ems-'+type+'-count');el.classList.remove('pop');void el.offsetWidth;el.classList.add('pop');updateEmsStats();loadEmsAlltime()}
+async function emsRemoveAction(type){if(!api()||!activeSession)return;await api().ems_remove_last_action(activeSession.id,type);updateEmsStats();loadEmsAlltime()}
+async function updateEmsStats(){if(!api()||!activeSession)return;const s=await api().ems_get_session_stats(activeSession.id);const a=s.actions,p=a.pmp||{count:0,total_profit:0},o=a.osmotr||{count:0,total_profit:0},u=a.ukol||{count:0,total_profit:0};$('ems-pmp-count').textContent=p.count;$('ems-pmp-total').textContent=fmt(p.total_profit);$('ems-osmotr-count').textContent=o.count;$('ems-osmotr-total').textContent=fmt(o.total_profit);$('ems-ukol-count').textContent=u.count;$('ems-ukol-total').textContent=fmt(u.total_profit);$('ems-total-profit').textContent=fmt(s.total_profit);$('ems-total-actions').textContent=p.count+o.count+u.count}
+async function emsEndSession(){if(!api())return;await api().ems_end_session();activeSession=null;if(sessionTimer)clearInterval(sessionTimer);loadEmsData()}
+async function loadEmsAlltime(){if(!api())return;const s=await api().ems_get_alltime_stats();const a=s.actions,p=a.pmp||{count:0},o=a.osmotr||{count:0},u=a.ukol||{count:0};$('ems-at-profit').textContent=fmt(s.total_profit);$('ems-at-pmp').textContent=p.count;$('ems-at-osmotr').textContent=o.count;$('ems-at-ukol').textContent=u.count;$('ems-at-sessions').textContent=s.session_count;const hrs=Math.floor(s.total_time_seconds/3600),mins=Math.floor((s.total_time_seconds%3600)/60);$('ems-at-time').textContent=hrs>0?`${hrs}ч ${mins}м`:`${mins}м`}
+async function loadEmsHistory(){if(!api())return;const ss=await api().ems_get_all_sessions();const el=$('ems-history');const done=ss.filter(s=>!s.is_active);if(!done.length){el.innerHTML='<div style="color:var(--text2);font-size:12px;padding:12px">Нет смен</div>';return}el.innerHTML=done.map(s=>`<div class="session-item"><span class="session-type">${s.work_type}</span><span style="color:var(--text2)">${fmtDate(s.started_at)}</span><span style="font-size:11px;color:var(--text2)">${s.action_count} действий</span><span class="session-profit">${fmt(s.total_profit)}</span></div>`).join('')}
 
 // ═══ RESALE ═══
-async function calcResale() {
-  const buy=parseFloat($('calc-buy').value)||0, sell=parseFloat($('calc-sell').value)||0, comm=parseFloat($('calc-commission').value)||3, exp=parseFloat($('calc-expenses').value)||0;
-  let r;
-  if (api()) r = await api().calc_resale(buy,sell,comm,exp);
-  else { const c=sell*(comm/100),n=sell-c,tc=buy+exp,p=n-tc; r={net_sale:n,commission:c,total_cost:tc,profit:p,roi:tc>0?(p/tc*100):0,breakeven:tc/(1-comm/100),gov_price:buy*.5}; }
-  const el = $('calc-result'); el.style.display = 'grid';
-  el.innerHTML = `
-    <div class="calc-item"><div class="calc-item-value ${r.profit>=0?'green':'red'}">${fmt(r.profit)}</div><div class="calc-item-label">Прибыль</div></div>
-    <div class="calc-item"><div class="calc-item-value accent">${r.roi.toFixed(1)}%</div><div class="calc-item-label">ROI</div></div>
-    <div class="calc-item"><div class="calc-item-value">${fmt(r.net_sale)}</div><div class="calc-item-label">Чист. продажа</div></div>
-    <div class="calc-item"><div class="calc-item-value red">${fmt(r.commission)}</div><div class="calc-item-label">Комиссия</div></div>
-    <div class="calc-item"><div class="calc-item-value yellow">${fmt(r.breakeven)}</div><div class="calc-item-label">Безубыток</div></div>
-    <div class="calc-item"><div class="calc-item-value" style="color:var(--text2)">${fmt(r.gov_price)}</div><div class="calc-item-label">Гос. цена 50%</div></div>`;
-}
-
-async function loadInventory() {
-  if (!api()) return;
-  const items = await api().inv_get_all(false);
-  const grid = $('inv-grid'), empty = $('inv-empty');
-  if (!items.length) { grid.innerHTML=''; empty.style.display='block'; return; }
-  empty.style.display = 'none';
-  grid.innerHTML = items.map(i => `<div class="inv-card scale-in"><div class="inv-name">${esc(i.name)}</div><div class="inv-price">${fmt(i.purchase_price)}</div><div class="inv-date">${fmtDate(i.purchased_at)}</div><div class="inv-actions"><button class="btn btn-green btn-sm" onclick="openSellModal(${i.id},'${esc(i.name)}',${i.purchase_price})">Продать</button><button class="btn btn-ghost btn-sm" onclick="deleteItem(${i.id})">Удалить</button></div></div>`).join('');
-}
-
-function showAddItemModal() { $('add-item-modal').classList.add('show'); $('item-name').focus(); }
-function closeAddItemModal() { $('add-item-modal').classList.remove('show'); }
-
-async function confirmAddItem() {
-  const name=$('item-name').value.trim(), price=parseFloat($('item-price').value)||0, link=$('item-link-calc').checked;
-  if (!name) return;
-  if (api()) await api().inv_add(name,price,link);
-  $('item-name').value=''; $('item-price').value='';
-  closeAddItemModal(); loadInventory(); loadResaleTx();
-}
-
-function openSellModal(id, name, buyPrice) {
-  sellItemId = id; sellItemBuyPrice = buyPrice;
-  $('sell-item-name').textContent = `${name} (куплено за ${fmt(buyPrice)})`;
-  $('sell-price').value = ''; $('sell-modal').classList.add('show'); $('sell-price').focus();
-}
-function closeSellModal() { $('sell-modal').classList.remove('show'); sellItemId = null; }
-
-async function confirmSell() {
-  const price = parseFloat($('sell-price').value)||0;
-  if (!sellItemId || !price) return;
-  if (api()) {
-    const r = await api().inv_sell(sellItemId, price);
-    if (r) showSuccess(r.item_name, sellItemBuyPrice, price, r.profit);
-  }
-  closeSellModal(); loadInventory(); loadResaleTx();
-}
-
-function showSuccess(name, buy, sell, profit) {
-  $('success-profit').textContent = fmt(profit);
-  $('success-profit').style.color = profit >= 0 ? 'var(--green)' : 'var(--red)';
-  $('success-detail').textContent = `${name}: ${fmt(buy)} → ${fmt(sell)}`;
-  $('success-overlay').classList.add('show');
-  if (profit > 0) spawnConfetti();
-}
-function closeSuccess() { $('success-overlay').classList.remove('show'); }
-
-async function deleteItem(id) {
-  if (!confirm('Удалить предмет?')) return;
-  if (api()) await api().inv_delete(id);
-  loadInventory(); loadResaleTx();
-}
-
-async function loadResaleTx() {
-  if (!api()) return;
-  const txs = await api().tx_get_all('resale');
-  const totals = await api().tx_get_totals('resale');
-  $('resale-totals').innerHTML = `<span style="color:var(--green)">${fmt(totals.income)}</span> / <span style="color:var(--red)">${fmt(totals.expense)}</span> = <span style="color:${totals.balance>=0?'var(--green)':'var(--red)'}"><b>${fmt(totals.balance)}</b></span>`;
-  renderTxList('resale-tx-list', txs);
-}
+async function calcResale(){const b=parseFloat($('calc-buy').value)||0,s=parseFloat($('calc-sell').value)||0,c=parseFloat($('calc-commission').value)||3,e=parseFloat($('calc-expenses').value)||0;let r;if(api())r=await api().calc_resale(b,s,c,e);else{const cm=s*(c/100),n=s-cm,tc=b+e,p=n-tc;r={net_sale:n,commission:cm,total_cost:tc,profit:p,roi:tc>0?(p/tc*100):0,breakeven:tc/(1-c/100),gov_price:b*.5}}const el=$('calc-result');el.style.display='grid';el.innerHTML=`<div class="calc-item"><div class="calc-item-value ${r.profit>=0?'green':'red'}">${fmt(r.profit)}</div><div class="calc-item-label">Прибыль</div></div><div class="calc-item"><div class="calc-item-value accent">${r.roi.toFixed(1)}%</div><div class="calc-item-label">ROI</div></div><div class="calc-item"><div class="calc-item-value">${fmt(r.net_sale)}</div><div class="calc-item-label">Чист. продажа</div></div><div class="calc-item"><div class="calc-item-value red">${fmt(r.commission)}</div><div class="calc-item-label">Комиссия</div></div><div class="calc-item"><div class="calc-item-value yellow">${fmt(r.breakeven)}</div><div class="calc-item-label">Безубыток</div></div><div class="calc-item"><div class="calc-item-value" style="color:var(--text2)">${fmt(r.gov_price)}</div><div class="calc-item-label">Гос. 50%</div></div>`}
+async function loadInventory(){if(!api())return;const items=await api().inv_get_all(false);const g=$('inv-grid'),e=$('inv-empty');if(!items.length){g.innerHTML='';e.style.display='block';return}e.style.display='none';g.innerHTML=items.map(i=>`<div class="inv-card"><div style="font-size:14px;font-weight:700;margin-bottom:4px">${esc(i.name)}</div><div style="font-size:13px;color:var(--yellow);margin-bottom:2px">${fmt(i.purchase_price)}</div><div style="font-size:10px;color:var(--text2);margin-bottom:10px">${fmtDate(i.purchased_at)}</div><div style="display:flex;gap:6px"><button class="btn btn-green btn-sm" onclick="openSellModal(${i.id},'${esc(i.name)}',${i.purchase_price})">Продать</button><button class="btn btn-ghost btn-sm" onclick="deleteItem(${i.id})">Удалить</button></div></div>`).join('')}
+function showAddItemModal(){$('add-item-modal').classList.add('show');$('item-name').focus()}
+function closeAddItemModal(){$('add-item-modal').classList.remove('show')}
+async function confirmAddItem(){const n=$('item-name').value.trim(),p=parseFloat($('item-price').value)||0,l=$('item-link-calc').checked;if(!n)return;if(api())await api().inv_add(n,p,l);$('item-name').value='';$('item-price').value='';closeAddItemModal();loadInventory();loadResaleTx()}
+function openSellModal(id,name,bp){sellItemId=id;sellItemBuyPrice=bp;$('sell-item-name').textContent=`${name} (${fmt(bp)})`;$('sell-price').value='';$('sell-modal').classList.add('show');$('sell-price').focus()}
+function closeSellModal(){$('sell-modal').classList.remove('show')}
+async function confirmSell(){const p=parseFloat($('sell-price').value)||0;if(!sellItemId||!p)return;if(api()){const r=await api().inv_sell(sellItemId,p);if(r)alert(`Продано: ${r.item_name}\nПрибыль: ${fmt(r.profit)}`)}closeSellModal();loadInventory();loadResaleTx()}
+async function deleteItem(id){if(!confirm('Удалить?'))return;if(api())await api().inv_delete(id);loadInventory();loadResaleTx()}
+async function loadResaleTx(){if(!api())return;const tx=await api().tx_get_all('resale'),t=await api().tx_get_totals('resale');$('resale-totals').innerHTML=`<span style="color:var(--green)">${fmt(t.income)}</span> / <span style="color:var(--red)">${fmt(t.expense)}</span> = <b style="color:${t.balance>=0?'var(--green)':'var(--red)'}">${fmt(t.balance)}</b>`;renderTxList('resale-tx-list',tx)}
 
 // ═══ WORK ═══
-async function loadWorkData() {
-  if (!api()) return;
-  const totals = await api().tx_get_totals('work');
-  $('work-income').textContent = fmt(totals.income);
-  $('work-expense').textContent = fmt(totals.expense);
-  $('work-balance').textContent = fmt(totals.balance);
-  renderTxList('work-tx-list', await api().tx_get_all('work'));
-}
+async function loadWorkData(){if(!api())return;const t=await api().tx_get_totals('work');$('work-income').textContent=fmt(t.income);$('work-expense').textContent=fmt(t.expense);$('work-balance').textContent=fmt(t.balance);renderTxList('work-tx-list',await api().tx_get_all('work'))}
+function setWorkPreset(n,a){$('work-comment').value=n;if(a)$('work-amount').value=a}
+async function addWorkTx(){const a=parseFloat($('work-amount').value),c=$('work-comment').value.trim();if(!a)return;if(api())await api().tx_add(a,c||'Работа','work');$('work-amount').value='';$('work-comment').value='';loadWorkData()}
+function renderTxList(cid,txs){const el=$(cid);if(!txs.length){el.innerHTML='<div style="color:var(--text2);font-size:12px;padding:16px;text-align:center">Пусто</div>';return}el.innerHTML=txs.map(t=>`<div class="tx-item"><span class="tx-amount ${t.amount>=0?'pos':'neg'}">${fmt(t.amount)}</span><span class="tx-comment">${esc(t.comment||'')}</span><span class="tx-date">${fmtDate(t.created_at)}</span><button class="tx-del" onclick="deleteTx(${t.id},'${cid}')">✕</button></div>`).join('')}
+async function deleteTx(id,src){if(!api())return;await api().tx_delete(id);if(src.includes('resale'))loadResaleTx();else loadWorkData()}
 
-function setWorkPreset(name, amount) {
-  $('work-comment').value = name; $('work-amount').value = amount;
-  document.querySelectorAll('.work-chip').forEach(c => c.classList.remove('active'));
-  event.target.classList.add('active');
-}
+// ═══ SKILLS ═══
+const SK=[{i:'💪',n:'Сила',m:[50,100,150,200,250],p:30},{i:'🍳',n:'Кулинария',m:[1.67,3.33,5,6.67,8.33],p:2},{i:'🦌',n:'Охота',m:[200,300,400,500,600],p:120},{i:'💎',n:'Сокровища',m:[300,600,900,1200,1500],p:180},{i:'🌾',n:'Фермерство',m:[112,112,225,225,337],p:13},{i:'🧱',n:'Строитель',m:[187,281,375,262,315],p:7},{i:'⛏',n:'Шахтер',m:[167,250,334,125,150],p:10},{i:'📦',n:'Грузчик',m:[187,281,375,234,281],p:7},{i:'🚕',n:'Таксист',m:[150,300,450,600,750],p:90},{i:'🤿',n:'Дайвер',m:[127,255,382,510,637],p:90},{i:'💰',n:'Инкассатор',m:[86,172,258,344,430],p:129},{i:'🚌',n:'Автобус',m:[122,245,350,455,577],p:210},{i:'🔧',n:'Механик',m:[80,160,240,320,400],p:120},{i:'🔥',n:'Пожарный',m:[112,225,337,450,562],p:27},{i:'🚛',n:'Дальнобой',m:[190,380,570,760,950],p:285},{i:'📮',n:'Курьер',m:[300,600,900,1200,1500],p:180},{i:'✉',n:'Почтальон',m:[70,140,210,280,350],p:30}];
+function fm(m){if(m>=1440){const d=Math.floor(m/1440),h=Math.floor((m%1440)/60);return`${d}д ${h}ч`}if(m>=60){const h=Math.floor(m/60),mm=Math.round(m%60);return mm>0?`${h}ч ${String(mm).padStart(2,'0')}м`:`${h}ч 00м`}if(m>=1)return`${Math.round(m)}м`;return`${Math.round(m*60)}с`}
+function fp(s){return`${Math.floor(s/60)}:${String(Math.round(s%60)).padStart(2,'0')}`}
+let skillMode='time';
+function setSkillMode(mode){skillMode=mode;document.querySelectorAll('[id^="sk-mode-"]').forEach(b=>{b.className='btn btn-sm btn-ghost';b.style.background=''});const btn=$('sk-mode-'+mode);btn.className='btn btn-sm';btn.style.background=mode==='plat'?'linear-gradient(135deg,#f5a623,#f57723)':'var(--accent)';renderSkills()}
+function renderSkills(){const d=skillMode==='plat'?2:1;const th=$('sk-thead');th.innerHTML='<th style="padding:12px 16px;text-align:left">Профессия</th><th style="padding:12px 8px;text-align:center">Ур.1</th><th style="padding:12px 8px;text-align:center">Ур.2</th><th style="padding:12px 8px;text-align:center">Ур.3</th><th style="padding:12px 8px;text-align:center">Ур.4</th><th style="padding:12px 8px;text-align:center">Ур.5</th><th style="padding:12px 8px;text-align:center">$/очко</th><th style="padding:12px 8px;text-align:center">До 5ур.</th>';$('skills-tbody').innerHTML=SK.map(s=>{const ls=s.m.map(m=>fm(m/d)),t=fm(s.m.reduce((a,b)=>a+b,0)/d);return`<tr style="border-bottom:1px solid var(--border)" onmouseenter="this.style.background='var(--glass)'" onmouseleave="this.style.background=''"><td style="padding:10px 16px;font-weight:600">${s.i} ${s.n}</td>${ls.map(l=>`<td style="padding:10px 8px;text-align:center;color:var(--accent)">${l}</td>`).join('')}<td style="padding:10px 8px;text-align:center">${fp(s.p/d)}</td><td style="padding:10px 8px;text-align:center;color:var(--yellow);font-weight:600">${t}</td></tr>`}).join('')}
 
-async function addWorkTx() {
-  const amount=parseFloat($('work-amount').value), comment=$('work-comment').value.trim();
-  if (!amount) return;
-  if (api()) await api().tx_add(amount, comment||'Работа', 'work');
-  $('work-amount').value=''; $('work-comment').value='';
-  document.querySelectorAll('.work-chip').forEach(c => c.classList.remove('active'));
-  loadWorkData();
-}
+// ═══ BP ═══
+let bpVip=false,bpX2=false,bpTasks=[];
+function toggleBpVip(){bpVip=!bpVip;$('bp-vip-btn').style.background=bpVip?'var(--accent)':'';$('bp-vip-btn').style.borderColor=bpVip?'var(--accent)':'';updateBpTotal()}
+function toggleBpX2(){bpX2=!bpX2;$('bp-x2-btn').style.background=bpX2?'var(--green)':'';$('bp-x2-btn').style.borderColor=bpX2?'var(--green)':'';updateBpTotal()}
+async function loadBpTasks(){if(!api())return;await api().bp_seed_defaults();bpTasks=await api().bp_get_tasks();renderBpTasks();updateBpTotal()}
+function renderBpTasks(f=''){const list=$('bp-task-list');const fl=f?bpTasks.filter(t=>t.text.toLowerCase().includes(f.toLowerCase())):bpTasks;list.innerHTML=fl.map(t=>`<div style="display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid rgba(255,255,255,.03);cursor:pointer;transition:.15s" onclick="toggleBp(${t.id},${t.done?0:1})" onmouseenter="this.style.background='var(--glass)'" onmouseleave="this.style.background=''"><div style="width:20px;height:20px;border-radius:6px;border:2px solid ${t.done?'var(--accent)':'var(--border)'};background:${t.done?'var(--accent)':'transparent'};display:flex;align-items:center;justify-content:center;flex-shrink:0">${t.done?'<span style="color:#fff;font-size:11px">✓</span>':''}</div><span style="flex:1;font-size:12px;${t.done?'text-decoration:line-through;opacity:.4':''}">${esc(t.text)}</span><span style="background:${t.done?'var(--green)':'var(--bg4)'};color:${t.done?'#000':'var(--text2)'};padding:2px 10px;border-radius:10px;font-size:10px;font-weight:700">${gbp(t.bp_value)} BP</span><button class="tx-del" onclick="event.stopPropagation();delBp(${t.id})" style="width:20px;height:20px;font-size:9px">✕</button></div>`).join('')}
+function gbp(b){let m=1;if(bpVip)m*=2;if(bpX2)m*=2;return b*m}
+async function toggleBp(id,d){if(!api())return;await api().bp_toggle_task(id,d);bpTasks=await api().bp_get_tasks();renderBpTasks($('bp-search').value);updateBpTotal()}
+async function updateBpTotal(){if(!api())return;const t=await api().bp_get_total();let e=t.earned;if(bpVip)e*=2;if(bpX2)e*=2;$('bp-earned').textContent=e+' BP'}
+function filterBpTasks(){renderBpTasks($('bp-search').value)}
+function showAddBpModal(){$('bp-add-modal').classList.add('show');$('bp-task-text').focus()}
+function closeBpModal(){$('bp-add-modal').classList.remove('show')}
+async function confirmAddBpTask(){const t=$('bp-task-text').value.trim(),v=parseInt($('bp-task-value').value)||2;if(!t)return;if(api())await api().bp_add_task(t,v);$('bp-task-text').value='';closeBpModal();loadBpTasks()}
+async function bpDeleteDone(){const d=bpTasks.filter(t=>t.done);if(!d.length)return;if(!confirm(`Удалить ${d.length} выполненных?`))return;if(api())for(const t of d)await api().bp_delete_task(t.id);loadBpTasks()}
+async function bpResetAll(){if(!confirm('Сбросить все?'))return;if(api())await api().bp_reset_all();loadBpTasks()}
+async function delBp(id){if(api())await api().bp_delete_task(id);loadBpTasks()}
 
-function renderTxList(containerId, txs) {
-  const el = $(containerId);
-  if (!txs.length) { el.innerHTML = '<div style="color:var(--text2);font-size:12px;padding:16px;text-align:center;opacity:.6">Пока ничего нет</div>'; return; }
-  el.innerHTML = txs.map(t => `<div class="tx-item slide-in"><span class="tx-amount ${t.amount>=0?'pos':'neg'}">${fmt(t.amount)}</span><span class="tx-comment">${esc(t.comment||'')}</span><span class="tx-date">${fmtDate(t.created_at)}</span><button class="tx-del" onclick="deleteTx(${t.id},'${containerId}')">✕</button></div>`).join('');
-}
-
-async function deleteTx(id, src) {
-  if (!api()) return;
-  await api().tx_delete(id);
-  if (src.includes('resale')) loadResaleTx(); else loadWorkData();
-}
-
-// ═══ DISCORD ═══
-async function loadWebhook() { if (!api()) return; const url = await api().discord_get_webhook(); if (url) $('discord-webhook').value = url; }
-async function saveWebhook() {
-  if (!api()) return;
-  await api().discord_set_webhook($('discord-webhook').value.trim());
-  const st = $('webhook-status'); st.style.color = 'var(--green)'; st.textContent = 'Сохранено!'; setTimeout(() => st.textContent='', 2000);
-}
-async function testWebhook() {
-  if (!api()) return;
-  const st = $('webhook-status'); st.style.color='var(--text2)'; st.textContent='Отправка...';
-  const r = await api().discord_test();
-  st.style.color = r.ok ? 'var(--green)' : 'var(--red)';
-  st.textContent = r.ok ? 'Отправлено!' : 'Ошибка: '+r.error;
-  setTimeout(() => st.textContent='', 4000);
-}
-
-// ═══ SKILLS TABLE ═══
-// Skills data: times in MINUTES for math
-const SKILLS_RAW = [
-  {icon:'💪',name:'Сила',mins:[50,100,150,200,250],ptSec:30},
-  {icon:'🍳',name:'Кулинария',mins:[1.67,3.33,5,6.67,8.33],ptSec:2},
-  {icon:'🦌',name:'Охота',mins:[200,300,400,500,600],ptSec:120},
-  {icon:'💎',name:'Поиск сокровищ',mins:[300,600,900,1200,1500],ptSec:180},
-  {icon:'🌾',name:'Фермерство',mins:[112,112,225,225,337],ptSec:13},
-  {icon:'🧱',name:'Строитель',mins:[187,281,375,262,315],ptSec:7},
-  {icon:'⛏',name:'Шахтер',mins:[167,250,334,125,150],ptSec:10},
-  {icon:'📦',name:'Грузчик',mins:[187,281,375,234,281],ptSec:7},
-  {icon:'🚕',name:'Таксист',mins:[150,300,450,600,750],ptSec:90},
-  {icon:'🤿',name:'Дайвер',mins:[127,255,382,510,637],ptSec:90},
-  {icon:'💰',name:'Инкассатор',mins:[86,172,258,344,430],ptSec:129},
-  {icon:'🚌',name:'Вод. автобуса',mins:[122,245,350,455,577],ptSec:210},
-  {icon:'🔧',name:'Механик',mins:[80,160,240,320,400],ptSec:120},
-  {icon:'🔥',name:'Пожарный',mins:[112,225,337,450,562],ptSec:27},
-  {icon:'🚛',name:'Дальнобойщик',mins:[190,380,570,760,950],ptSec:285},
-  {icon:'📮',name:'Курьер',mins:[300,600,900,1200,1500],ptSec:180},
-  {icon:'✉',name:'Почтальон',mins:[70,140,210,280,350],ptSec:30},
-];
-
-function fmtMins(m) {
-  if (m >= 1440) { const d = Math.floor(m/1440); const h = Math.floor((m%1440)/60); return `${d}д ${h}ч`; }
-  if (m >= 60) { const h = Math.floor(m/60); const mm = Math.round(m%60); return mm>0 ? `${h}ч ${String(mm).padStart(2,'0')}м` : `${h}ч 00м`; }
-  if (m >= 1) return `${Math.round(m)}м`;
-  return `${Math.round(m*60)}с`;
-}
-function fmtPtSec(s) {
-  if (s >= 3600) return `${Math.floor(s/3600)}:${String(Math.floor((s%3600)/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;
-  return `0:${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;
-}
-
-let skillMode = 'time';
-function setSkillMode(mode) {
-  skillMode = mode;
-  document.querySelectorAll('[id^="sk-mode-"]').forEach(b => { b.className = 'btn btn-sm btn-ghost'; b.style.background = ''; });
-  const btn = $('sk-mode-'+mode);
-  btn.className = 'btn btn-sm'; btn.style.background = mode==='plat' ? 'linear-gradient(135deg,#f5a623,#f57723)' : 'var(--accent)';
-  renderSkills();
-}
-
-function renderSkills() {
-  const div = skillMode === 'plat' ? 2 : 1;
-  const tbody = $('skills-tbody');
-  // Update header for "all" mode
-  const thead = tbody.parentElement.querySelector('thead tr');
-  if (skillMode === 'all') {
-    thead.innerHTML = `<th style="padding:14px 16px;text-align:left">Профессия</th><th style="padding:14px 8px;text-align:center" colspan="5">Время (обычное)</th><th style="padding:14px 8px;text-align:center">До 5 ур.</th><th style="padding:14px 8px;text-align:center" colspan="5">Platinum VIP</th><th style="padding:14px 8px;text-align:center">До 5 ур.</th>`;
-  } else {
-    thead.innerHTML = `<th style="padding:14px 16px;text-align:left">Профессия</th><th style="padding:14px 8px;text-align:center">Ур. 1</th><th style="padding:14px 8px;text-align:center">Ур. 2</th><th style="padding:14px 8px;text-align:center">Ур. 3</th><th style="padding:14px 8px;text-align:center">Ур. 4</th><th style="padding:14px 8px;text-align:center">Ур. 5</th><th style="padding:14px 8px;text-align:center">$/очко</th><th style="padding:14px 8px;text-align:center">До 5 ур.</th>`;
-  }
-
-  tbody.innerHTML = SKILLS_RAW.map(s => {
-    const lvls = s.mins.map(m => fmtMins(m / div));
-    const total = fmtMins(s.mins.reduce((a,b) => a+b, 0) / div);
-    const pt = fmtPtSec(Math.round(s.ptSec / div));
-
-    if (skillMode === 'all') {
-      const lvlsP = s.mins.map(m => fmtMins(m / 2));
-      const totalP = fmtMins(s.mins.reduce((a,b) => a+b, 0) / 2);
-      return `<tr style="border-bottom:1px solid var(--border);transition:background .15s" onmouseenter="this.style.background='var(--glass)'" onmouseleave="this.style.background='transparent'">
-        <td style="padding:12px 16px;font-weight:600">${s.icon} ${s.name}</td>
-        ${lvls.map(l=>`<td style="padding:12px 6px;text-align:center;color:var(--accent);font-size:11px">${l}</td>`).join('')}
-        <td style="padding:12px 6px;text-align:center;color:var(--yellow);font-weight:600;font-size:11px">${total}</td>
-        ${lvlsP.map(l=>`<td style="padding:12px 6px;text-align:center;color:var(--green);font-size:11px">${l}</td>`).join('')}
-        <td style="padding:12px 6px;text-align:center;color:var(--green);font-weight:600;font-size:11px">${totalP}</td>
-      </tr>`;
-    }
-
-    return `<tr style="border-bottom:1px solid var(--border);transition:background .15s" onmouseenter="this.style.background='var(--glass)'" onmouseleave="this.style.background='transparent'">
-      <td style="padding:12px 16px;font-weight:600">${s.icon} ${s.name}</td>
-      ${lvls.map(l => `<td style="padding:12px 8px;text-align:center;color:var(--accent)">${l}</td>`).join('')}
-      <td style="padding:12px 8px;text-align:center">${pt}</td>
-      <td style="padding:12px 8px;text-align:center;color:var(--yellow);font-weight:600">${total}</td>
-    </tr>`;
-  }).join('');
-  // Update fishing & shooting too
-  renderFishShoot(div);
-}
-
-function renderFishShoot(div) {
-  // Fishing: 6 levels
-  const fishMins = [250, 751, 33.4, 66, 100, 167];
-  const fishPt = 10;
-  const fEl = $('fish-row');
-  if (fEl) {
-    const fl = fishMins.map(m => fmtMins(m/div));
-    const ft = fmtMins(fishMins.reduce((a,b)=>a+b,0)/div);
-    fEl.innerHTML = `<td style="padding:12px 16px;font-weight:600">🎣 Рыбалка</td>${fl.map(l=>`<td style="padding:12px 8px;text-align:center;color:var(--accent)">${l}</td>`).join('')}<td style="padding:12px 8px;text-align:center">${fmtPtSec(Math.round(fishPt/div))}</td><td style="padding:12px 8px;text-align:center;color:var(--yellow);font-weight:600">${ft}</td>`;
-  }
-  // Shooting: 10 levels (grouped: 1-5, 6-9, 10)
-  const shootMins = [225, 675, 900];
-  const shootPt = 2700;
-  const sEl = $('shoot-row');
-  if (sEl) {
-    const sl = shootMins.map(m => fmtMins(m/div));
-    const st = fmtMins(shootMins.reduce((a,b)=>a+b,0)/div);
-    sEl.innerHTML = `<td style="padding:12px 16px;font-weight:600">🔫 Стрельба</td>${sl.map(l=>`<td style="padding:12px 8px;text-align:center;color:var(--accent)">${l}</td>`).join('')}<td style="padding:12px 8px;text-align:center">${fmtPtSec(Math.round(shootPt/div))}</td><td style="padding:12px 8px;text-align:center;color:var(--yellow);font-weight:600">${st}</td>`;
-  }
-}
-
-// ═══ BP TASKS ═══
-let bpVip = false, bpX2 = false, bpTasks = [];
-
-function toggleBpVip() { bpVip = !bpVip; $('bp-vip-btn').style.background = bpVip ? 'var(--accent)' : 'var(--bg4)'; updateBpTotal(); }
-function toggleBpX2() { bpX2 = !bpX2; $('bp-x2-btn').style.background = bpX2 ? 'var(--green)' : 'var(--bg4)'; updateBpTotal(); }
-
-async function loadBpTasks() {
-  if (!api()) return;
-  await api().bp_seed_defaults();
-  bpTasks = await api().bp_get_tasks();
-  renderBpTasks();
-  updateBpTotal();
-}
-
-function renderBpTasks(filter='') {
-  const list = $('bp-task-list');
-  const filtered = filter ? bpTasks.filter(t => t.text.toLowerCase().includes(filter.toLowerCase())) : bpTasks;
-  list.innerHTML = filtered.map(t => `
-    <div style="display:flex;align-items:center;gap:12px;padding:13px 16px;border-bottom:1px solid rgba(255,255,255,.03);transition:background .15s;cursor:pointer" onclick="toggleBp(${t.id},${t.done?0:1})" onmouseenter="this.style.background='var(--glass)'" onmouseleave="this.style.background='transparent'">
-      <div style="width:22px;height:22px;border-radius:6px;border:2px solid ${t.done?'var(--accent)':'var(--border)'};background:${t.done?'var(--accent)':'transparent'};display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s">
-        ${t.done?'<span style="color:#fff;font-size:12px">✓</span>':''}
-      </div>
-      <span style="flex:1;font-size:13px;${t.done?'text-decoration:line-through;opacity:.5':''}">${esc(t.text)}</span>
-      <span style="background:${t.done?'var(--green)':'var(--bg4)'};color:${t.done?'#000':'var(--text2)'};padding:3px 10px;border-radius:10px;font-size:11px;font-weight:700;flex-shrink:0">${getBpValue(t.bp_value)} BP</span>
-      <button class="tx-del" onclick="event.stopPropagation();deleteBpTask(${t.id})" style="width:22px;height:22px;font-size:10px">✕</button>
-    </div>`).join('');
-}
-
-function getBpValue(base) {
-  let mult = 1;
-  if (bpVip) mult *= 2;
-  if (bpX2) mult *= 2;
-  return base * mult;
-}
-
-async function toggleBp(id, done) {
-  if (!api()) return;
-  await api().bp_toggle_task(id, done);
-  bpTasks = await api().bp_get_tasks();
-  renderBpTasks($('bp-search').value);
-  updateBpTotal();
-}
-
-async function updateBpTotal() {
-  if (!api()) return;
-  const t = await api().bp_get_total();
-  let earned = t.earned;
-  if (bpVip) earned *= 2;
-  if (bpX2) earned *= 2;
-  $('bp-earned').textContent = earned + ' BP';
-}
-
-function filterBpTasks() { renderBpTasks($('bp-search').value); }
-
-function showAddBpModal() { $('bp-add-modal').classList.add('show'); $('bp-task-text').focus(); }
-function closeBpModal() { $('bp-add-modal').classList.remove('show'); }
-
-async function confirmAddBpTask() {
-  const text = $('bp-task-text').value.trim();
-  const val = parseInt($('bp-task-value').value) || 2;
-  if (!text) return;
-  if (api()) await api().bp_add_task(text, val);
-  $('bp-task-text').value = ''; $('bp-task-value').value = '2';
-  closeBpModal(); loadBpTasks();
-}
-
-async function bpResetAll() {
-  if (!confirm('Сбросить все задания?')) return;
-  if (api()) await api().bp_reset_all();
-  loadBpTasks();
-}
-
-async function bpDeleteDone() {
-  const done = bpTasks.filter(t => t.done);
-  if (!done.length) return;
-  if (!confirm(`Удалить ${done.length} выполненных заданий?`)) return;
-  if (api()) for (const t of done) await api().bp_delete_task(t.id);
-  loadBpTasks();
-}
-
-async function deleteBpTask(id) {
-  if (api()) await api().bp_delete_task(id);
-  loadBpTasks();
-}
+// ═══ ANTI-AFK / KPK (UI only — logic runs on Windows) ═══
+let afkRunning=false,afkTicks=0;
+function toggleAfk(){afkRunning=!afkRunning;$('afk-start-btn').textContent=afkRunning?'⏹ Остановить':'▶ Запустить';$('afk-start-btn').className=afkRunning?'btn btn-red':'btn btn-green';$('afk-status').className=afkRunning?'session-badge active':'session-badge inactive';$('afk-status').innerHTML=afkRunning?'<span class="pulse-dot"></span> Работает':'Остановлен'}
+let kpkMode='ems',kpkRunning=false;
+function setKpkMode(m){kpkMode=m;$('kpk-ems-btn').className=m==='ems'?'btn btn-accent':'btn btn-ghost';$('kpk-taxi-btn').className=m==='taxi'?'btn btn-accent':'btn btn-ghost';$('kpk-desc').textContent=m==='ems'?'EMS: ↑ (телефон) → Medical Services → Принять вызов':'Такси: ↑ (телефон) → Taxi → Принять заказ'}
+function toggleKpk(){kpkRunning=!kpkRunning;$('kpk-start-btn').textContent=kpkRunning?'⏹ Остановить':'▶ Запустить';$('kpk-start-btn').className=kpkRunning?'btn btn-red':'btn btn-green';$('kpk-status').className=kpkRunning?'session-badge active':'session-badge inactive';$('kpk-status').innerHTML=kpkRunning?'<span class="pulse-dot"></span> Работает':'Остановлен'}
 
 // ═══ SETTINGS ═══
-async function exportData() {
-  if (!api()) return;
-  const data = await api().export_json();
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob([data], {type:'application/json'}));
-  a.download = 'gta5rp_helper_backup.json'; a.click();
-}
-async function clearAllData() {
-  if (!confirm('Вы уверены? Все данные будут удалены!')) return;
-  if (!confirm('Точно удалить? Это необратимо.')) return;
-  if (api()) await api().clear_all_data();
-  loadEmsData(); loadWorkData();
-}
+async function loadWebhook(){if(!api())return;const u=await api().discord_get_webhook();if(u)$('discord-webhook').value=u}
+async function saveWebhook(){if(!api())return;await api().discord_set_webhook($('discord-webhook').value.trim());const s=$('webhook-status');s.style.color='var(--green)';s.textContent='✓ Сохранено';setTimeout(()=>s.textContent='',2000)}
+async function testWebhook(){if(!api())return;const s=$('webhook-status');s.style.color='var(--text2)';s.textContent='...';const r=await api().discord_test();s.style.color=r.ok?'var(--green)':'var(--red)';s.textContent=r.ok?'✓ Отправлено':'✕ '+r.error;setTimeout(()=>s.textContent='',3000)}
+async function exportData(){if(!api())return;const d=await api().export_json();const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([d],{type:'application/json'}));a.download='2helper_backup.json';a.click()}
+async function clearAllData(){if(!confirm('Удалить все данные?'))return;if(!confirm('Точно?'))return;if(api())await api().clear_all_data();loadEmsData();loadWorkData()}
 
 // ═══ INIT ═══
-window.addEventListener('pywebviewready', () => { loadEmsData(); loadWebhook(); });
-window.minimize = () => { if (window.pywebview) window.pywebview.api.minimize && window.pywebview.api.minimize(); };
-if (!window.pywebview) setTimeout(() => { document.querySelector('.titlebar').style.display='none'; document.querySelector('.app').style.height='100vh'; }, 100);
+window.addEventListener('pywebviewready',()=>{loadWebhook()});
+if(!window.pywebview)setTimeout(()=>{document.querySelector('.titlebar').style.display='none';document.querySelector('.app-container').style.height='100vh'},100);
 </script>
 </body>
 </html>
