@@ -587,7 +587,7 @@ input::placeholder { color: var(--text2); }
             </tr>
           </thead>
           <tbody>
-            <tr style="border-bottom:1px solid var(--border)">
+            <tr id="fish-row" style="border-bottom:1px solid var(--border)">
               <td style="padding:12px 16px;font-weight:600">🎣 Рыбалка</td>
               <td style="padding:12px 8px;text-align:center">4ч 10м</td>
               <td style="padding:12px 8px;text-align:center">12ч 31м</td>
@@ -616,7 +616,7 @@ input::placeholder { color: var(--text2); }
             </tr>
           </thead>
           <tbody>
-            <tr>
+            <tr id="shoot-row">
               <td style="padding:12px 16px;font-weight:600">🔫 Стрельба</td>
               <td style="padding:12px 8px;text-align:center">3ч 45м</td>
               <td style="padding:12px 8px;text-align:center">11ч 15м</td>
@@ -653,7 +653,8 @@ input::placeholder { color: var(--text2); }
         <div id="bp-task-list"></div>
         <div style="display:flex;gap:10px;margin-top:16px">
           <button class="btn btn-accent" onclick="showAddBpModal()">+ Добавить</button>
-          <button class="btn btn-ghost" onclick="bpResetAll()">Сбросить</button>
+          <button class="btn btn-ghost" onclick="bpDeleteDone()">🗑 Удалить</button>
+          <button class="btn btn-ghost" onclick="bpResetAll()">↻ Сбросить</button>
         </div>
       </div>
     </div>
@@ -1037,47 +1038,105 @@ async function testWebhook() {
 }
 
 // ═══ SKILLS TABLE ═══
-const SKILLS_DATA = [
-  {icon:'💪',name:'Сила',l1:'50м',l2:'1ч 40м',l3:'2ч 30м',l4:'3ч 20м',l5:'4ч 10м',pt:'0:00:30',total:'12ч 30м'},
-  {icon:'🍳',name:'Кулинария',l1:'1м 40с',l2:'3м 20с',l3:'5м',l4:'6м 40с',l5:'8м 20с',pt:'0:00:02',total:'25м 01с'},
-  {icon:'🦌',name:'Охота',l1:'3ч 20м',l2:'5ч 00м',l3:'6ч 40м',l4:'8ч 20м',l5:'10ч 00м',pt:'0:02:00',total:'33ч 20м'},
-  {icon:'💎',name:'Поиск сокровищ',l1:'5ч 00м',l2:'10ч 00м',l3:'15ч 00м',l4:'20ч 00м',l5:'1д 1ч',pt:'0:03:00',total:'75ч 00м'},
-  {icon:'🌾',name:'Фермерство',l1:'1ч 52м',l2:'1ч 52м',l3:'3ч 45м',l4:'3ч 45м',l5:'5ч 37м',pt:'0:00:13',total:'17ч 49м'},
-  {icon:'🧱',name:'Строитель',l1:'3ч 07м',l2:'4ч 41м',l3:'6ч 15м',l4:'4ч 22м',l5:'5ч 15м',pt:'0:00:07',total:'23ч 41м'},
-  {icon:'⛏',name:'Шахтер',l1:'2ч 47м',l2:'4ч 10м',l3:'5ч 34м',l4:'2ч 05м',l5:'2ч 30м',pt:'0:00:10',total:'17ч 06м'},
-  {icon:'📦',name:'Грузчик',l1:'3ч 07м',l2:'4ч 41м',l3:'6ч 15м',l4:'3ч 54м',l5:'4ч 41м',pt:'0:00:07',total:'22ч 39м'},
-  {icon:'🚕',name:'Таксист',l1:'2ч 30м',l2:'5ч 00м',l3:'7ч 30м',l4:'10ч 00м',l5:'12ч 30м',pt:'0:01:30',total:'37ч 30м'},
-  {icon:'🤿',name:'Дайвер',l1:'2ч 07м',l2:'4ч 15м',l3:'6ч 22м',l4:'8ч 30м',l5:'10ч 37м',pt:'0:01:30',total:'31ч 52м'},
-  {icon:'💰',name:'Инкассатор',l1:'1ч 26м',l2:'2ч 52м',l3:'4ч 18м',l4:'5ч 44м',l5:'7ч 10м',pt:'0:02:09',total:'21ч 30м'},
-  {icon:'🚌',name:'Вод. автобуса',l1:'2ч 02м',l2:'4ч 05м',l3:'5ч 50м',l4:'7ч 35м',l5:'9ч 37м',pt:'0:03:30',total:'29ч 10м'},
-  {icon:'🔧',name:'Механик',l1:'1ч 20м',l2:'2ч 40м',l3:'4ч 00м',l4:'5ч 20м',l5:'6ч 40м',pt:'0:02:00',total:'20ч 00м'},
-  {icon:'🔥',name:'Пожарный',l1:'1ч 52м',l2:'3ч 45м',l3:'5ч 37м',l4:'7ч 30м',l5:'9ч 22м',pt:'0:00:27',total:'28ч 07м'},
-  {icon:'🚛',name:'Дальнобойщик',l1:'3ч 10м',l2:'6ч 20м',l3:'9ч 30м',l4:'12ч 40м',l5:'15ч 50м',pt:'0:04:45',total:'47ч 30м'},
-  {icon:'📮',name:'Курьер',l1:'5ч 00м',l2:'10ч 00м',l3:'15ч 00м',l4:'20ч 00м',l5:'1д 1ч',pt:'0:03:00',total:'75ч 00м'},
-  {icon:'✉',name:'Почтальон',l1:'1ч 10м',l2:'2ч 20м',l3:'3ч 30м',l4:'4ч 40м',l5:'5ч 50м',pt:'0:00:30',total:'17ч 30м'},
+// Skills data: times in MINUTES for math
+const SKILLS_RAW = [
+  {icon:'💪',name:'Сила',mins:[50,100,150,200,250],ptSec:30},
+  {icon:'🍳',name:'Кулинария',mins:[1.67,3.33,5,6.67,8.33],ptSec:2},
+  {icon:'🦌',name:'Охота',mins:[200,300,400,500,600],ptSec:120},
+  {icon:'💎',name:'Поиск сокровищ',mins:[300,600,900,1200,1500],ptSec:180},
+  {icon:'🌾',name:'Фермерство',mins:[112,112,225,225,337],ptSec:13},
+  {icon:'🧱',name:'Строитель',mins:[187,281,375,262,315],ptSec:7},
+  {icon:'⛏',name:'Шахтер',mins:[167,250,334,125,150],ptSec:10},
+  {icon:'📦',name:'Грузчик',mins:[187,281,375,234,281],ptSec:7},
+  {icon:'🚕',name:'Таксист',mins:[150,300,450,600,750],ptSec:90},
+  {icon:'🤿',name:'Дайвер',mins:[127,255,382,510,637],ptSec:90},
+  {icon:'💰',name:'Инкассатор',mins:[86,172,258,344,430],ptSec:129},
+  {icon:'🚌',name:'Вод. автобуса',mins:[122,245,350,455,577],ptSec:210},
+  {icon:'🔧',name:'Механик',mins:[80,160,240,320,400],ptSec:120},
+  {icon:'🔥',name:'Пожарный',mins:[112,225,337,450,562],ptSec:27},
+  {icon:'🚛',name:'Дальнобойщик',mins:[190,380,570,760,950],ptSec:285},
+  {icon:'📮',name:'Курьер',mins:[300,600,900,1200,1500],ptSec:180},
+  {icon:'✉',name:'Почтальон',mins:[70,140,210,280,350],ptSec:30},
 ];
+
+function fmtMins(m) {
+  if (m >= 1440) { const d = Math.floor(m/1440); const h = Math.floor((m%1440)/60); return `${d}д ${h}ч`; }
+  if (m >= 60) { const h = Math.floor(m/60); const mm = Math.round(m%60); return mm>0 ? `${h}ч ${String(mm).padStart(2,'0')}м` : `${h}ч 00м`; }
+  if (m >= 1) return `${Math.round(m)}м`;
+  return `${Math.round(m*60)}с`;
+}
+function fmtPtSec(s) {
+  if (s >= 3600) return `${Math.floor(s/3600)}:${String(Math.floor((s%3600)/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;
+  return `0:${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;
+}
 
 let skillMode = 'time';
 function setSkillMode(mode) {
   skillMode = mode;
-  document.querySelectorAll('[id^="sk-mode-"]').forEach(b => { b.className = 'btn btn-sm btn-ghost'; });
-  $('sk-mode-'+mode).className = 'btn btn-sm'; $('sk-mode-'+mode).style.background = 'var(--accent)';
+  document.querySelectorAll('[id^="sk-mode-"]').forEach(b => { b.className = 'btn btn-sm btn-ghost'; b.style.background = ''; });
+  const btn = $('sk-mode-'+mode);
+  btn.className = 'btn btn-sm'; btn.style.background = mode==='plat' ? 'linear-gradient(135deg,#f5a623,#f57723)' : 'var(--accent)';
   renderSkills();
 }
 
 function renderSkills() {
+  const div = skillMode === 'plat' ? 2 : 1;
   const tbody = $('skills-tbody');
-  tbody.innerHTML = SKILLS_DATA.map(s => `
-    <tr style="border-bottom:1px solid var(--border);transition:background .15s" onmouseenter="this.style.background='var(--glass)'" onmouseleave="this.style.background='transparent'">
+  // Update header for "all" mode
+  const thead = tbody.parentElement.querySelector('thead tr');
+  if (skillMode === 'all') {
+    thead.innerHTML = `<th style="padding:14px 16px;text-align:left">Профессия</th><th style="padding:14px 8px;text-align:center" colspan="5">Время (обычное)</th><th style="padding:14px 8px;text-align:center">До 5 ур.</th><th style="padding:14px 8px;text-align:center" colspan="5">Platinum VIP</th><th style="padding:14px 8px;text-align:center">До 5 ур.</th>`;
+  } else {
+    thead.innerHTML = `<th style="padding:14px 16px;text-align:left">Профессия</th><th style="padding:14px 8px;text-align:center">Ур. 1</th><th style="padding:14px 8px;text-align:center">Ур. 2</th><th style="padding:14px 8px;text-align:center">Ур. 3</th><th style="padding:14px 8px;text-align:center">Ур. 4</th><th style="padding:14px 8px;text-align:center">Ур. 5</th><th style="padding:14px 8px;text-align:center">$/очко</th><th style="padding:14px 8px;text-align:center">До 5 ур.</th>`;
+  }
+
+  tbody.innerHTML = SKILLS_RAW.map(s => {
+    const lvls = s.mins.map(m => fmtMins(m / div));
+    const total = fmtMins(s.mins.reduce((a,b) => a+b, 0) / div);
+    const pt = fmtPtSec(Math.round(s.ptSec / div));
+
+    if (skillMode === 'all') {
+      const lvlsP = s.mins.map(m => fmtMins(m / 2));
+      const totalP = fmtMins(s.mins.reduce((a,b) => a+b, 0) / 2);
+      return `<tr style="border-bottom:1px solid var(--border);transition:background .15s" onmouseenter="this.style.background='var(--glass)'" onmouseleave="this.style.background='transparent'">
+        <td style="padding:12px 16px;font-weight:600">${s.icon} ${s.name}</td>
+        ${lvls.map(l=>`<td style="padding:12px 6px;text-align:center;color:var(--accent);font-size:11px">${l}</td>`).join('')}
+        <td style="padding:12px 6px;text-align:center;color:var(--yellow);font-weight:600;font-size:11px">${total}</td>
+        ${lvlsP.map(l=>`<td style="padding:12px 6px;text-align:center;color:var(--green);font-size:11px">${l}</td>`).join('')}
+        <td style="padding:12px 6px;text-align:center;color:var(--green);font-weight:600;font-size:11px">${totalP}</td>
+      </tr>`;
+    }
+
+    return `<tr style="border-bottom:1px solid var(--border);transition:background .15s" onmouseenter="this.style.background='var(--glass)'" onmouseleave="this.style.background='transparent'">
       <td style="padding:12px 16px;font-weight:600">${s.icon} ${s.name}</td>
-      <td style="padding:12px 8px;text-align:center;color:var(--accent)">${s.l1}</td>
-      <td style="padding:12px 8px;text-align:center;color:var(--accent)">${s.l2}</td>
-      <td style="padding:12px 8px;text-align:center;color:var(--accent)">${s.l3}</td>
-      <td style="padding:12px 8px;text-align:center;color:var(--accent)">${s.l4}</td>
-      <td style="padding:12px 8px;text-align:center;color:var(--accent)">${s.l5}</td>
-      <td style="padding:12px 8px;text-align:center">${s.pt}</td>
-      <td style="padding:12px 8px;text-align:center;color:var(--yellow);font-weight:600">${s.total}</td>
-    </tr>`).join('');
+      ${lvls.map(l => `<td style="padding:12px 8px;text-align:center;color:var(--accent)">${l}</td>`).join('')}
+      <td style="padding:12px 8px;text-align:center">${pt}</td>
+      <td style="padding:12px 8px;text-align:center;color:var(--yellow);font-weight:600">${total}</td>
+    </tr>`;
+  }).join('');
+  // Update fishing & shooting too
+  renderFishShoot(div);
+}
+
+function renderFishShoot(div) {
+  // Fishing: 6 levels
+  const fishMins = [250, 751, 33.4, 66, 100, 167];
+  const fishPt = 10;
+  const fEl = $('fish-row');
+  if (fEl) {
+    const fl = fishMins.map(m => fmtMins(m/div));
+    const ft = fmtMins(fishMins.reduce((a,b)=>a+b,0)/div);
+    fEl.innerHTML = `<td style="padding:12px 16px;font-weight:600">🎣 Рыбалка</td>${fl.map(l=>`<td style="padding:12px 8px;text-align:center;color:var(--accent)">${l}</td>`).join('')}<td style="padding:12px 8px;text-align:center">${fmtPtSec(Math.round(fishPt/div))}</td><td style="padding:12px 8px;text-align:center;color:var(--yellow);font-weight:600">${ft}</td>`;
+  }
+  // Shooting: 10 levels (grouped: 1-5, 6-9, 10)
+  const shootMins = [225, 675, 900];
+  const shootPt = 2700;
+  const sEl = $('shoot-row');
+  if (sEl) {
+    const sl = shootMins.map(m => fmtMins(m/div));
+    const st = fmtMins(shootMins.reduce((a,b)=>a+b,0)/div);
+    sEl.innerHTML = `<td style="padding:12px 16px;font-weight:600">🔫 Стрельба</td>${sl.map(l=>`<td style="padding:12px 8px;text-align:center;color:var(--accent)">${l}</td>`).join('')}<td style="padding:12px 8px;text-align:center">${fmtPtSec(Math.round(shootPt/div))}</td><td style="padding:12px 8px;text-align:center;color:var(--yellow);font-weight:600">${st}</td>`;
+  }
 }
 
 // ═══ BP TASKS ═══
@@ -1149,6 +1208,14 @@ async function confirmAddBpTask() {
 async function bpResetAll() {
   if (!confirm('Сбросить все задания?')) return;
   if (api()) await api().bp_reset_all();
+  loadBpTasks();
+}
+
+async function bpDeleteDone() {
+  const done = bpTasks.filter(t => t.done);
+  if (!done.length) return;
+  if (!confirm(`Удалить ${done.length} выполненных заданий?`)) return;
+  if (api()) for (const t of done) await api().bp_delete_task(t.id);
   loadBpTasks();
 }
 
