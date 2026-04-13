@@ -65,6 +65,14 @@ def init_db():
             sold_at TEXT
         );
 
+        CREATE TABLE IF NOT EXISTS bp_tasks (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            text TEXT NOT NULL,
+            bp_value INTEGER NOT NULL DEFAULT 2,
+            done INTEGER DEFAULT 0,
+            created_at TEXT NOT NULL
+        );
+
         CREATE TABLE IF NOT EXISTS settings (
             key TEXT PRIMARY KEY,
             value TEXT
@@ -448,6 +456,95 @@ class Api:
             color,
             fields
         )
+
+    # ─── Бонус Поинты (BP) ───
+
+    def bp_get_tasks(self):
+        conn = get_db()
+        rows = conn.execute("SELECT * FROM bp_tasks ORDER BY id").fetchall()
+        conn.close()
+        return [dict(r) for r in rows]
+
+    def bp_add_task(self, text, bp_value):
+        conn = get_db()
+        conn.execute(
+            "INSERT INTO bp_tasks (text, bp_value, created_at) VALUES (?,?,?)",
+            (text, bp_value, datetime.now().isoformat())
+        )
+        conn.commit()
+        conn.close()
+        return True
+
+    def bp_toggle_task(self, task_id, done):
+        conn = get_db()
+        conn.execute("UPDATE bp_tasks SET done=? WHERE id=?", (1 if done else 0, task_id))
+        conn.commit()
+        conn.close()
+        return True
+
+    def bp_delete_task(self, task_id):
+        conn = get_db()
+        conn.execute("DELETE FROM bp_tasks WHERE id=?", (task_id,))
+        conn.commit()
+        conn.close()
+        return True
+
+    def bp_reset_all(self):
+        conn = get_db()
+        conn.execute("UPDATE bp_tasks SET done=0")
+        conn.commit()
+        conn.close()
+        return True
+
+    def bp_get_total(self):
+        conn = get_db()
+        row = conn.execute(
+            "SELECT COALESCE(SUM(CASE WHEN done=1 THEN bp_value ELSE 0 END),0) as earned, COALESCE(SUM(bp_value),0) as total FROM bp_tasks"
+        ).fetchone()
+        conn.close()
+        return {"earned": row["earned"], "total": row["total"]}
+
+    def bp_seed_defaults(self):
+        """Заполнить стандартными заданиями если пусто."""
+        conn = get_db()
+        count = conn.execute("SELECT COUNT(*) as c FROM bp_tasks").fetchone()["c"]
+        if count > 0:
+            conn.close()
+            return False
+        tasks = [
+            ("3 часа в онлайне", 4),
+            ("Нули в казино", 4),
+            ("25 действий на стройке", 4),
+            ("25 действий в порту", 4),
+            ("25 действий в шахте", 4),
+            ("3 победы в Дэнс Баттлах", 4),
+            ("Два раза оплатить смену внешности у хирурга в EMS", 4),
+            ("Добавить 5 видео в кинотеатре", 2),
+            ("Выиграть 5 игр в тренировочном комплексе (от 100$)", 2),
+            ("Выиграть 3 любых игры на арене (от 100$)", 2),
+            ("2 круга на любом маршруте автобусника", 4),
+            ("5 раз снять 100% шкуру с животных", 4),
+            ("Выиграть гонку в картинге", 2),
+            ("10 действий на ферме", 2),
+            ("Потушить 25 'огоньков' пожарным", 2),
+            ("Выкопать 1 сокровище (не мусор)", 2),
+            ("Проехать 1 уличную гонку", 2),
+            ("Выполнить 3 заказа дальнобойщиком", 4),
+            ("Заказ материалов для бизнеса вручную", 2),
+            ("20 подходов в тренажерном зале", 2),
+            ("Успешная тренировка в тире", 2),
+            ("10 посылок на почте", 2),
+            ("Арендовать киностудию", 4),
+            ("Купить лотерейный билет", 2),
+        ]
+        for text, bp in tasks:
+            conn.execute(
+                "INSERT INTO bp_tasks (text, bp_value, created_at) VALUES (?,?,?)",
+                (text, bp, datetime.now().isoformat())
+            )
+        conn.commit()
+        conn.close()
+        return True
 
     # ─── Профили перекупа ───
 

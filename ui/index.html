@@ -377,6 +377,14 @@ input::placeholder { color: var(--text2); }
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
       Работа / Доход
     </div>
+    <div class="nav-item" data-tab="skills" onclick="switchTab('skills')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      Навыки
+    </div>
+    <div class="nav-item" data-tab="bp" onclick="switchTab('bp')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+      BP Задания
+    </div>
     <div class="nav-item" data-tab="settings" onclick="switchTab('settings')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
       Настройки
@@ -533,6 +541,136 @@ input::placeholder { color: var(--text2); }
       </div>
     </div>
 
+    <!-- ═══ SKILLS TAB ═══ -->
+    <div class="tab" id="tab-skills">
+      <h2>Таблица навыков</h2>
+      <p class="subtitle">Время прокачки профессий по уровням</p>
+
+      <div style="display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap">
+        <button class="btn btn-sm" id="sk-mode-time" onclick="setSkillMode('time')" style="background:var(--accent)">Время</button>
+        <button class="btn btn-sm btn-ghost" id="sk-mode-plat" onclick="setSkillMode('plat')">Platinum VIP</button>
+        <button class="btn btn-sm btn-ghost" id="sk-mode-all" onclick="setSkillMode('all')">Все</button>
+      </div>
+
+      <div class="card" style="padding:0;overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse;font-size:12px">
+          <thead>
+            <tr style="border-bottom:1px solid var(--border);color:var(--text2);text-transform:uppercase;font-size:10px;letter-spacing:.5px">
+              <th style="padding:14px 16px;text-align:left">Профессия</th>
+              <th style="padding:14px 8px;text-align:center">Ур. 1</th>
+              <th style="padding:14px 8px;text-align:center">Ур. 2</th>
+              <th style="padding:14px 8px;text-align:center">Ур. 3</th>
+              <th style="padding:14px 8px;text-align:center">Ур. 4</th>
+              <th style="padding:14px 8px;text-align:center">Ур. 5</th>
+              <th style="padding:14px 8px;text-align:center">$/очко</th>
+              <th style="padding:14px 8px;text-align:center">До 5 ур.</th>
+            </tr>
+          </thead>
+          <tbody id="skills-tbody"></tbody>
+        </table>
+      </div>
+
+      <div class="card" style="padding:0;overflow-x:auto;margin-top:4px">
+        <div style="padding:14px 16px;font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border)">Рыбалка</div>
+        <table style="width:100%;border-collapse:collapse;font-size:12px">
+          <thead>
+            <tr style="border-bottom:1px solid var(--border);color:var(--text2);font-size:10px">
+              <th style="padding:12px 16px;text-align:left">Профессия</th>
+              <th style="padding:12px 8px;text-align:center">Ур. 1</th>
+              <th style="padding:12px 8px;text-align:center">Ур. 2</th>
+              <th style="padding:12px 8px;text-align:center">Ур. 3</th>
+              <th style="padding:12px 8px;text-align:center">Ур. 4</th>
+              <th style="padding:12px 8px;text-align:center">Ур. 5</th>
+              <th style="padding:12px 8px;text-align:center">Ур. 6</th>
+              <th style="padding:12px 8px;text-align:center">$/очко</th>
+              <th style="padding:12px 8px;text-align:center">До 6 ур.</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid var(--border)">
+              <td style="padding:12px 16px;font-weight:600">🎣 Рыбалка</td>
+              <td style="padding:12px 8px;text-align:center">4ч 10м</td>
+              <td style="padding:12px 8px;text-align:center">12ч 31м</td>
+              <td style="padding:12px 8px;text-align:center">33м 24с</td>
+              <td style="padding:12px 8px;text-align:center">1ч 06м</td>
+              <td style="padding:12px 8px;text-align:center">1ч 40м</td>
+              <td style="padding:12px 8px;text-align:center;color:var(--accent)">2ч 47м</td>
+              <td style="padding:12px 8px;text-align:center">0:00:10</td>
+              <td style="padding:12px 8px;text-align:center;color:var(--yellow)">6ч 24м</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card" style="padding:0;overflow-x:auto;margin-top:4px">
+        <div style="padding:14px 16px;font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border)">Стрельба</div>
+        <table style="width:100%;border-collapse:collapse;font-size:12px">
+          <thead>
+            <tr style="border-bottom:1px solid var(--border);color:var(--text2);font-size:10px">
+              <th style="padding:12px 16px;text-align:left">Профессия</th>
+              <th style="padding:12px 8px;text-align:center">Ур. 1-5</th>
+              <th style="padding:12px 8px;text-align:center">Ур. 6-9</th>
+              <th style="padding:12px 8px;text-align:center">Ур. 10</th>
+              <th style="padding:12px 8px;text-align:center">$/очко</th>
+              <th style="padding:12px 8px;text-align:center">До 10 ур.</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="padding:12px 16px;font-weight:600">🔫 Стрельба</td>
+              <td style="padding:12px 8px;text-align:center">3ч 45м</td>
+              <td style="padding:12px 8px;text-align:center">11ч 15м</td>
+              <td style="padding:12px 8px;text-align:center">15ч 00м</td>
+              <td style="padding:12px 8px;text-align:center">0:45:00</td>
+              <td style="padding:12px 8px;text-align:center;color:var(--yellow)">78ч 45м</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ═══ BP TAB ═══ -->
+    <div class="tab" id="tab-bp">
+      <h2>Бонус Поинты</h2>
+      <p class="subtitle">Ежедневные задания для прокачки</p>
+
+      <div class="card" style="display:flex;align-items:center;gap:20px">
+        <div style="width:60px;height:60px;border-radius:14px;background:linear-gradient(135deg,#f5a623,#f57723);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:#fff;flex-shrink:0">BP</div>
+        <div>
+          <div style="font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:1px">Бонус Поинты</div>
+          <div style="font-size:32px;font-weight:800;color:var(--accent)" id="bp-earned">0 BP</div>
+        </div>
+        <div style="margin-left:auto;display:flex;gap:8px">
+          <button class="btn btn-sm" id="bp-vip-btn" onclick="toggleBpVip()" style="background:var(--bg4);border:1px solid var(--border)">Gold / Platinum VIP</button>
+          <button class="btn btn-sm" id="bp-x2-btn" onclick="toggleBpX2()" style="background:var(--bg4);border:1px solid var(--border)">x2 Сервер</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div style="margin-bottom:14px">
+          <input type="text" id="bp-search" placeholder="Поиск по заданиям..." oninput="filterBpTasks()" style="font-size:12px">
+        </div>
+        <div id="bp-task-list"></div>
+        <div style="display:flex;gap:10px;margin-top:16px">
+          <button class="btn btn-accent" onclick="showAddBpModal()">+ Добавить</button>
+          <button class="btn btn-ghost" onclick="bpResetAll()">Сбросить</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- BP Add Modal -->
+    <div class="modal-overlay" id="bp-add-modal">
+      <div class="modal">
+        <div class="modal-title">Добавить задание</div>
+        <div class="input-group"><label>Текст задания</label><input type="text" id="bp-task-text" placeholder="Описание задания"></div>
+        <div class="input-group"><label>BP за выполнение</label><input type="number" id="bp-task-value" value="2" min="1"></div>
+        <div style="display:flex;gap:8px;margin-top:14px">
+          <button class="btn btn-accent" onclick="confirmAddBpTask()">Добавить</button>
+          <button class="btn btn-ghost" onclick="closeBpModal()">Отмена</button>
+        </div>
+      </div>
+    </div>
+
     <!-- ═══ SETTINGS TAB ═══ -->
     <div class="tab" id="tab-settings">
       <h2>Настройки</h2>
@@ -658,6 +796,8 @@ function switchTab(tab) {
   if (tab==='resale') { loadInventory(); loadResaleTx(); }
   if (tab==='work') loadWorkData();
   if (tab==='ems') loadEmsData();
+  if (tab==='skills') renderSkills();
+  if (tab==='bp') loadBpTasks();
   if (tab==='settings') loadWebhook();
 }
 
@@ -894,6 +1034,127 @@ async function testWebhook() {
   st.style.color = r.ok ? 'var(--green)' : 'var(--red)';
   st.textContent = r.ok ? 'Отправлено!' : 'Ошибка: '+r.error;
   setTimeout(() => st.textContent='', 4000);
+}
+
+// ═══ SKILLS TABLE ═══
+const SKILLS_DATA = [
+  {icon:'💪',name:'Сила',l1:'50м',l2:'1ч 40м',l3:'2ч 30м',l4:'3ч 20м',l5:'4ч 10м',pt:'0:00:30',total:'12ч 30м'},
+  {icon:'🍳',name:'Кулинария',l1:'1м 40с',l2:'3м 20с',l3:'5м',l4:'6м 40с',l5:'8м 20с',pt:'0:00:02',total:'25м 01с'},
+  {icon:'🦌',name:'Охота',l1:'3ч 20м',l2:'5ч 00м',l3:'6ч 40м',l4:'8ч 20м',l5:'10ч 00м',pt:'0:02:00',total:'33ч 20м'},
+  {icon:'💎',name:'Поиск сокровищ',l1:'5ч 00м',l2:'10ч 00м',l3:'15ч 00м',l4:'20ч 00м',l5:'1д 1ч',pt:'0:03:00',total:'75ч 00м'},
+  {icon:'🌾',name:'Фермерство',l1:'1ч 52м',l2:'1ч 52м',l3:'3ч 45м',l4:'3ч 45м',l5:'5ч 37м',pt:'0:00:13',total:'17ч 49м'},
+  {icon:'🧱',name:'Строитель',l1:'3ч 07м',l2:'4ч 41м',l3:'6ч 15м',l4:'4ч 22м',l5:'5ч 15м',pt:'0:00:07',total:'23ч 41м'},
+  {icon:'⛏',name:'Шахтер',l1:'2ч 47м',l2:'4ч 10м',l3:'5ч 34м',l4:'2ч 05м',l5:'2ч 30м',pt:'0:00:10',total:'17ч 06м'},
+  {icon:'📦',name:'Грузчик',l1:'3ч 07м',l2:'4ч 41м',l3:'6ч 15м',l4:'3ч 54м',l5:'4ч 41м',pt:'0:00:07',total:'22ч 39м'},
+  {icon:'🚕',name:'Таксист',l1:'2ч 30м',l2:'5ч 00м',l3:'7ч 30м',l4:'10ч 00м',l5:'12ч 30м',pt:'0:01:30',total:'37ч 30м'},
+  {icon:'🤿',name:'Дайвер',l1:'2ч 07м',l2:'4ч 15м',l3:'6ч 22м',l4:'8ч 30м',l5:'10ч 37м',pt:'0:01:30',total:'31ч 52м'},
+  {icon:'💰',name:'Инкассатор',l1:'1ч 26м',l2:'2ч 52м',l3:'4ч 18м',l4:'5ч 44м',l5:'7ч 10м',pt:'0:02:09',total:'21ч 30м'},
+  {icon:'🚌',name:'Вод. автобуса',l1:'2ч 02м',l2:'4ч 05м',l3:'5ч 50м',l4:'7ч 35м',l5:'9ч 37м',pt:'0:03:30',total:'29ч 10м'},
+  {icon:'🔧',name:'Механик',l1:'1ч 20м',l2:'2ч 40м',l3:'4ч 00м',l4:'5ч 20м',l5:'6ч 40м',pt:'0:02:00',total:'20ч 00м'},
+  {icon:'🔥',name:'Пожарный',l1:'1ч 52м',l2:'3ч 45м',l3:'5ч 37м',l4:'7ч 30м',l5:'9ч 22м',pt:'0:00:27',total:'28ч 07м'},
+  {icon:'🚛',name:'Дальнобойщик',l1:'3ч 10м',l2:'6ч 20м',l3:'9ч 30м',l4:'12ч 40м',l5:'15ч 50м',pt:'0:04:45',total:'47ч 30м'},
+  {icon:'📮',name:'Курьер',l1:'5ч 00м',l2:'10ч 00м',l3:'15ч 00м',l4:'20ч 00м',l5:'1д 1ч',pt:'0:03:00',total:'75ч 00м'},
+  {icon:'✉',name:'Почтальон',l1:'1ч 10м',l2:'2ч 20м',l3:'3ч 30м',l4:'4ч 40м',l5:'5ч 50м',pt:'0:00:30',total:'17ч 30м'},
+];
+
+let skillMode = 'time';
+function setSkillMode(mode) {
+  skillMode = mode;
+  document.querySelectorAll('[id^="sk-mode-"]').forEach(b => { b.className = 'btn btn-sm btn-ghost'; });
+  $('sk-mode-'+mode).className = 'btn btn-sm'; $('sk-mode-'+mode).style.background = 'var(--accent)';
+  renderSkills();
+}
+
+function renderSkills() {
+  const tbody = $('skills-tbody');
+  tbody.innerHTML = SKILLS_DATA.map(s => `
+    <tr style="border-bottom:1px solid var(--border);transition:background .15s" onmouseenter="this.style.background='var(--glass)'" onmouseleave="this.style.background='transparent'">
+      <td style="padding:12px 16px;font-weight:600">${s.icon} ${s.name}</td>
+      <td style="padding:12px 8px;text-align:center;color:var(--accent)">${s.l1}</td>
+      <td style="padding:12px 8px;text-align:center;color:var(--accent)">${s.l2}</td>
+      <td style="padding:12px 8px;text-align:center;color:var(--accent)">${s.l3}</td>
+      <td style="padding:12px 8px;text-align:center;color:var(--accent)">${s.l4}</td>
+      <td style="padding:12px 8px;text-align:center;color:var(--accent)">${s.l5}</td>
+      <td style="padding:12px 8px;text-align:center">${s.pt}</td>
+      <td style="padding:12px 8px;text-align:center;color:var(--yellow);font-weight:600">${s.total}</td>
+    </tr>`).join('');
+}
+
+// ═══ BP TASKS ═══
+let bpVip = false, bpX2 = false, bpTasks = [];
+
+function toggleBpVip() { bpVip = !bpVip; $('bp-vip-btn').style.background = bpVip ? 'var(--accent)' : 'var(--bg4)'; updateBpTotal(); }
+function toggleBpX2() { bpX2 = !bpX2; $('bp-x2-btn').style.background = bpX2 ? 'var(--green)' : 'var(--bg4)'; updateBpTotal(); }
+
+async function loadBpTasks() {
+  if (!api()) return;
+  await api().bp_seed_defaults();
+  bpTasks = await api().bp_get_tasks();
+  renderBpTasks();
+  updateBpTotal();
+}
+
+function renderBpTasks(filter='') {
+  const list = $('bp-task-list');
+  const filtered = filter ? bpTasks.filter(t => t.text.toLowerCase().includes(filter.toLowerCase())) : bpTasks;
+  list.innerHTML = filtered.map(t => `
+    <div style="display:flex;align-items:center;gap:12px;padding:13px 16px;border-bottom:1px solid rgba(255,255,255,.03);transition:background .15s;cursor:pointer" onclick="toggleBp(${t.id},${t.done?0:1})" onmouseenter="this.style.background='var(--glass)'" onmouseleave="this.style.background='transparent'">
+      <div style="width:22px;height:22px;border-radius:6px;border:2px solid ${t.done?'var(--accent)':'var(--border)'};background:${t.done?'var(--accent)':'transparent'};display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s">
+        ${t.done?'<span style="color:#fff;font-size:12px">✓</span>':''}
+      </div>
+      <span style="flex:1;font-size:13px;${t.done?'text-decoration:line-through;opacity:.5':''}">${esc(t.text)}</span>
+      <span style="background:${t.done?'var(--green)':'var(--bg4)'};color:${t.done?'#000':'var(--text2)'};padding:3px 10px;border-radius:10px;font-size:11px;font-weight:700;flex-shrink:0">${getBpValue(t.bp_value)} BP</span>
+      <button class="tx-del" onclick="event.stopPropagation();deleteBpTask(${t.id})" style="width:22px;height:22px;font-size:10px">✕</button>
+    </div>`).join('');
+}
+
+function getBpValue(base) {
+  let mult = 1;
+  if (bpVip) mult *= 2;
+  if (bpX2) mult *= 2;
+  return base * mult;
+}
+
+async function toggleBp(id, done) {
+  if (!api()) return;
+  await api().bp_toggle_task(id, done);
+  bpTasks = await api().bp_get_tasks();
+  renderBpTasks($('bp-search').value);
+  updateBpTotal();
+}
+
+async function updateBpTotal() {
+  if (!api()) return;
+  const t = await api().bp_get_total();
+  let earned = t.earned;
+  if (bpVip) earned *= 2;
+  if (bpX2) earned *= 2;
+  $('bp-earned').textContent = earned + ' BP';
+}
+
+function filterBpTasks() { renderBpTasks($('bp-search').value); }
+
+function showAddBpModal() { $('bp-add-modal').classList.add('show'); $('bp-task-text').focus(); }
+function closeBpModal() { $('bp-add-modal').classList.remove('show'); }
+
+async function confirmAddBpTask() {
+  const text = $('bp-task-text').value.trim();
+  const val = parseInt($('bp-task-value').value) || 2;
+  if (!text) return;
+  if (api()) await api().bp_add_task(text, val);
+  $('bp-task-text').value = ''; $('bp-task-value').value = '2';
+  closeBpModal(); loadBpTasks();
+}
+
+async function bpResetAll() {
+  if (!confirm('Сбросить все задания?')) return;
+  if (api()) await api().bp_reset_all();
+  loadBpTasks();
+}
+
+async function deleteBpTask(id) {
+  if (api()) await api().bp_delete_task(id);
+  loadBpTasks();
 }
 
 // ═══ SETTINGS ═══
