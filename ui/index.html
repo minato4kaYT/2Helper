@@ -415,21 +415,21 @@ input::placeholder { color: var(--text2); }
         <div class="ems-actions">
           <div class="ems-action-btn" onclick="emsAction('pmp')">
             <div class="ems-action-name">ПМП</div>
-            <div class="ems-action-price">$1 650 / чел.</div>
+            <div class="ems-action-price">$1 980 / чел. (+20%)</div>
             <div class="ems-action-count" id="ems-pmp-count">0</div>
             <div class="ems-action-total" id="ems-pmp-total">$0</div>
             <div class="ems-minus" onclick="event.stopPropagation();emsRemoveAction('pmp')">−</div>
           </div>
           <div class="ems-action-btn" onclick="emsAction('osmotr')">
             <div class="ems-action-name">Мед. осмотр</div>
-            <div class="ems-action-price">$188 / чел.</div>
+            <div class="ems-action-price">$226 / чел. (+20%)</div>
             <div class="ems-action-count" id="ems-osmotr-count">0</div>
             <div class="ems-action-total" id="ems-osmotr-total">$0</div>
             <div class="ems-minus" onclick="event.stopPropagation();emsRemoveAction('osmotr')">−</div>
           </div>
           <div class="ems-action-btn" onclick="emsAction('ukol')">
-            <div class="ems-action-name">Укол</div>
-            <div class="ems-action-price">$3 000 (прибыль $1 650)</div>
+            <div class="ems-action-name">Укол от нарко</div>
+            <div class="ems-action-price">$3 600 (прибыль $1 980)</div>
             <div class="ems-action-count" id="ems-ukol-count">0</div>
             <div class="ems-action-total" id="ems-ukol-total">$0</div>
             <div class="ems-minus" onclick="event.stopPropagation();emsRemoveAction('ukol')">−</div>
@@ -439,6 +439,18 @@ input::placeholder { color: var(--text2); }
       </div>
 
       <div class="card" style="margin-top:20px">
+        <div class="card-title">Статистика за всё время</div>
+        <div class="stats-grid" id="ems-alltime-grid">
+          <div class="stat-box"><div class="stat-value green" id="ems-at-profit">$0</div><div class="stat-label">Всего заработано</div></div>
+          <div class="stat-box"><div class="stat-value accent" id="ems-at-pmp">0</div><div class="stat-label">ПМП</div></div>
+          <div class="stat-box"><div class="stat-value accent" id="ems-at-osmotr">0</div><div class="stat-label">Осмотры</div></div>
+          <div class="stat-box"><div class="stat-value accent" id="ems-at-ukol">0</div><div class="stat-label">Уколы</div></div>
+          <div class="stat-box"><div class="stat-value yellow" id="ems-at-sessions">0</div><div class="stat-label">Смен</div></div>
+          <div class="stat-box"><div class="stat-value yellow" id="ems-at-time">0ч</div><div class="stat-label">Время</div></div>
+        </div>
+      </div>
+
+      <div class="card">
         <div class="card-title">История смен</div>
         <div id="ems-history"></div>
       </div>
@@ -497,14 +509,20 @@ input::placeholder { color: var(--text2); }
           <div class="input-group" style="flex:2"><label>Комментарий</label><input type="text" id="work-comment" placeholder="Газонокосилка за час"></div>
         </div>
         <div class="work-selector">
-          <div class="work-chip" onclick="setWorkPreset('Газонокосилка',12000)">Газонокосилка</div>
-          <div class="work-chip" onclick="setWorkPreset('Грузчик',15000)">Грузчик</div>
-          <div class="work-chip" onclick="setWorkPreset('Таксист',20000)">Таксист</div>
-          <div class="work-chip" onclick="setWorkPreset('Дальнобой',35000)">Дальнобой</div>
-          <div class="work-chip" onclick="setWorkPreset('Автобус',18000)">Автобус</div>
-          <div class="work-chip" onclick="setWorkPreset('Инкассатор',25000)">Инкассатор</div>
-          <div class="work-chip" onclick="setWorkPreset('Рыбалка',10000)">Рыбалка</div>
-          <div class="work-chip" onclick="setWorkPreset('Электрик',22000)">Электрик</div>
+          <div class="work-chip" onclick="setWorkPreset('Шахта',0)">Шахта</div>
+          <div class="work-chip" onclick="setWorkPreset('Стройка',0)">Стройка</div>
+          <div class="work-chip" onclick="setWorkPreset('Порт',0)">Порт</div>
+          <div class="work-chip" onclick="setWorkPreset('Ферма',0)">Ферма</div>
+          <div class="work-chip" onclick="setWorkPreset('Такси',0)">Такси</div>
+          <div class="work-chip" onclick="setWorkPreset('Автобус',0)">Автобус</div>
+          <div class="work-chip" onclick="setWorkPreset('Дайвинг',0)">Дайвинг</div>
+          <div class="work-chip" onclick="setWorkPreset('Механик',0)">Механик</div>
+          <div class="work-chip" onclick="setWorkPreset('Инкассатор',0)">Инкассатор</div>
+          <div class="work-chip" onclick="setWorkPreset('Дальнобой',0)">Дальнобой</div>
+          <div class="work-chip" onclick="setWorkPreset('Почта/Курьер',0)">Почта</div>
+          <div class="work-chip" onclick="setWorkPreset('Пожарный',0)">Пожарный</div>
+          <div class="work-chip" onclick="setWorkPreset('Охота',0)">Охота</div>
+          <div class="work-chip" onclick="setWorkPreset('Сокровища',0)">Сокровища</div>
         </div>
         <button class="btn btn-green" onclick="addWorkTx()">Добавить</button>
       </div>
@@ -653,6 +671,7 @@ async function loadEmsData() {
     $('ems-active-panel').style.display = 'none';
   }
   loadEmsHistory();
+  loadEmsAlltime();
 }
 
 async function emsStartSession() {
@@ -692,6 +711,7 @@ async function emsAction(type) {
   const el = $('ems-'+type+'-count');
   el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop');
   updateEmsStats();
+  loadEmsAlltime();
 }
 
 async function emsRemoveAction(type) {
@@ -721,6 +741,21 @@ async function emsEndSession() {
   activeSession = null;
   if (sessionTimer) clearInterval(sessionTimer);
   loadEmsData();
+}
+
+async function loadEmsAlltime() {
+  if (!api()) return;
+  const s = await api().ems_get_alltime_stats();
+  const a = s.actions;
+  const pmp = a.pmp||{count:0,total_profit:0}, osm = a.osmotr||{count:0,total_profit:0}, ukol = a.ukol||{count:0,total_profit:0};
+  $('ems-at-profit').textContent = fmt(s.total_profit);
+  $('ems-at-pmp').textContent = pmp.count;
+  $('ems-at-osmotr').textContent = osm.count;
+  $('ems-at-ukol').textContent = ukol.count;
+  $('ems-at-sessions').textContent = s.session_count;
+  const hrs = Math.floor(s.total_time_seconds/3600);
+  const mins = Math.floor((s.total_time_seconds%3600)/60);
+  $('ems-at-time').textContent = hrs > 0 ? `${hrs}ч ${mins}м` : `${mins}м`;
 }
 
 async function loadEmsHistory() {

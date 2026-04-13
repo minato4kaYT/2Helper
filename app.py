@@ -126,10 +126,11 @@ class Api:
         return None
 
     def ems_add_action(self, session_id, action_type):
+        # Базовые цены +20% бонус
         prices = {
-            "pmp": {"price": 1650, "profit": 1650},
-            "osmotr": {"price": 188, "profit": 188},
-            "ukol": {"price": 3000, "profit": 1650},
+            "pmp": {"price": 1980, "profit": 1980},        # 1650 * 1.2
+            "osmotr": {"price": 226, "profit": 226},       # 188 * 1.2 ≈ 226
+            "ukol": {"price": 3600, "profit": 1980},       # 3000*1.2, profit 1650*1.2
         }
         p = prices.get(action_type, {"price": 0, "profit": 0})
         conn = get_db()
@@ -170,6 +171,35 @@ class Api:
             }
             total += r["total_profit"]
         return {"actions": stats, "total_profit": total}
+
+    def ems_get_alltime_stats(self):
+        """Статистика EMS за ВСЁ время (все смены)."""
+        conn = get_db()
+        rows = conn.execute(
+            "SELECT action_type, COUNT(*) as cnt, SUM(profit_per) as total_profit, SUM(price_per) as total_price FROM ems_actions GROUP BY action_type"
+        ).fetchall()
+        session_count = conn.execute(
+            "SELECT COUNT(*) as c FROM work_sessions"
+        ).fetchone()["c"]
+        total_time = conn.execute(
+            "SELECT SUM(CAST((julianday(ended_at) - julianday(started_at)) * 86400 AS INTEGER)) as secs FROM work_sessions WHERE ended_at IS NOT NULL"
+        ).fetchone()["secs"] or 0
+        conn.close()
+        stats = {}
+        total = 0
+        for r in rows:
+            stats[r["action_type"]] = {
+                "count": r["cnt"],
+                "total_profit": r["total_profit"],
+                "total_price": r["total_price"]
+            }
+            total += r["total_profit"]
+        return {
+            "actions": stats,
+            "total_profit": total,
+            "session_count": session_count,
+            "total_time_seconds": total_time
+        }
 
     def ems_get_all_sessions(self):
         conn = get_db()
