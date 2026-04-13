@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+*.db
+*.log
+*.exe
+*.build/
+*.dist/
+*.onefile-build/
+.env
+helper.db
