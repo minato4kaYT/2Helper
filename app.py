@@ -451,11 +451,14 @@ class Api:
         req = urllib.request.Request(
             webhook_url,
             data=payload,
-            headers={"Content-Type": "application/json"},
+            headers={
+                "Content-Type": "application/json",
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+            },
             method="POST"
         )
         try:
-            with urllib.request.urlopen(req, timeout=5) as resp:
+            with urllib.request.urlopen(req, timeout=10) as resp:
                 return {"ok": True, "status": resp.status}
         except urllib.error.HTTPError as e:
             return {"ok": False, "error": f"HTTP {e.code}"}
