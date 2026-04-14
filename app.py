@@ -328,6 +328,37 @@ class Api:
         conn.close()
         return [dict(r) for r in rows]
 
+    # ─── Сохранение файла ───
+
+    def save_file(self, content, default_name):
+        """Сохранить файл через диалог."""
+        try:
+            import webview
+            window = webview.windows[0]
+            result = window.create_file_dialog(
+                webview.SAVE_DIALOG,
+                save_filename=default_name,
+                file_types=('JSON files (*.json)',)
+            )
+            if result:
+                path = result if isinstance(result, str) else result[0]
+                with open(path, 'w', encoding='utf-8') as f:
+                    f.write(content)
+                return path
+        except Exception as e:
+            # Fallback: save to desktop or current dir
+            try:
+                path = os.path.join(os.path.expanduser("~"), "Desktop", default_name)
+                with open(path, 'w', encoding='utf-8') as f:
+                    f.write(content)
+                return path
+            except Exception:
+                path = os.path.join(os.path.dirname(os.path.abspath(__file__)), default_name)
+                with open(path, 'w', encoding='utf-8') as f:
+                    f.write(content)
+                return path
+        return None
+
     # ─── Статус игры ───
 
     def check_game_running(self):
@@ -627,7 +658,7 @@ def main():
         height=750,
         min_size=(900, 600),
         frameless=True,
-        easy_drag=False,
+        easy_drag=True,
     )
     webview.start(debug=False)
 
