@@ -328,6 +328,20 @@ class Api:
         conn.close()
         return [dict(r) for r in rows]
 
+    # ─── Статус игры ───
+
+    def check_game_running(self):
+        """Проверяет запущена ли GTA5 (Windows)."""
+        try:
+            import subprocess
+            result = subprocess.run(
+                ["tasklist", "/FI", "IMAGENAME eq GTA5.exe", "/NH"],
+                capture_output=True, text=True, timeout=3
+            )
+            return "GTA5.exe" in result.stdout
+        except Exception:
+            return False
+
     # ─── Калькулятор перекупа ───
 
     def calc_resale(self, buy_price, sell_price, commission_pct, expenses):

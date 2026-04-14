@@ -219,6 +219,10 @@ input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-g)}
           <div class="grid-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="3"/><path d="M12 18h.01"/><path d="M9 7h6m-6 3h6m-6 3h4"/></svg></div>
           <div class="grid-label">Авто КПК</div>
         </div>
+        <div class="grid-item" onclick="openPage('timer')">
+          <div class="grid-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/><path d="M12 2v2m0 16v2"/></svg></div>
+          <div class="grid-label">Таймер</div>
+        </div>
         <div class="grid-item" onclick="openPage('settings')">
           <div class="grid-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div>
           <div class="grid-label">Настройки</div>
@@ -449,6 +453,44 @@ input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-g)}
     </div>
   </div>
 
+  <!-- ═══ TIMER PAGE ═══ -->
+  <div class="page" id="page-timer">
+    <div class="sub-header"><button class="back-btn" onclick="openPage('main')">← Главная</button><span class="sub-title">⏱ Таймер</span></div>
+    <div class="sub-content">
+      <div class="card" style="text-align:center;padding:30px">
+        <div style="font-size:56px;font-weight:800;font-family:monospace;color:var(--accent);margin-bottom:16px;text-shadow:0 0 30px var(--accent-g)" id="timer-display">00:00:00</div>
+        <div class="progress-bar" style="margin-bottom:20px"><div class="progress-fill" id="timer-progress" style="width:0%;background:linear-gradient(90deg,var(--accent),var(--green))"></div></div>
+        <div class="input-row" style="justify-content:center;margin-bottom:16px">
+          <div class="input-group" style="width:80px"><label>Часы</label><input type="number" id="timer-h" value="0" min="0" max="23" style="text-align:center"></div>
+          <div class="input-group" style="width:80px"><label>Минуты</label><input type="number" id="timer-m" value="5" min="0" max="59" style="text-align:center"></div>
+          <div class="input-group" style="width:80px"><label>Секунды</label><input type="number" id="timer-s" value="0" min="0" max="59" style="text-align:center"></div>
+        </div>
+        <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+          <button class="btn btn-green" id="timer-start-btn" onclick="timerStart()">▶ Старт</button>
+          <button class="btn btn-ghost" onclick="timerPause()">⏸ Пауза</button>
+          <button class="btn btn-red" onclick="timerReset()">⏹ Сброс</button>
+        </div>
+        <div style="margin-top:16px;display:flex;align-items:center;justify-content:center;gap:8px">
+          <input type="checkbox" id="timer-sound" checked style="width:auto;accent-color:var(--accent)">
+          <label for="timer-sound" style="font-size:12px;color:var(--text2);cursor:pointer">Звуковое оповещение</label>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Быстрые таймеры</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-ghost btn-sm" onclick="timerQuick(1)">1 мин</button>
+          <button class="btn btn-ghost btn-sm" onclick="timerQuick(3)">3 мин</button>
+          <button class="btn btn-ghost btn-sm" onclick="timerQuick(5)">5 мин</button>
+          <button class="btn btn-ghost btn-sm" onclick="timerQuick(10)">10 мин</button>
+          <button class="btn btn-ghost btn-sm" onclick="timerQuick(15)">15 мин</button>
+          <button class="btn btn-ghost btn-sm" onclick="timerQuick(30)">30 мин</button>
+          <button class="btn btn-ghost btn-sm" onclick="timerQuick(60)">1 час</button>
+          <button class="btn btn-ghost btn-sm" onclick="timerQuick(120)">2 часа</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- ═══ SETTINGS PAGE ═══ -->
   <div class="page" id="page-settings">
     <div class="sub-header"><button class="back-btn" onclick="openPage('main')">← Главная</button><span class="sub-title">⚙️ Настройки</span></div>
@@ -617,6 +659,138 @@ async function confirmAddBpTask(){const t=$('bp-task-text').value.trim(),v=parse
 async function bpDeleteDone(){const d=bpTasks.filter(t=>t.done);if(!d.length)return;if(!confirm(`Удалить ${d.length} выполненных?`))return;if(api())for(const t of d)await api().bp_delete_task(t.id);loadBpTasks()}
 async function bpResetAll(){if(!confirm('Сбросить все?'))return;if(api())await api().bp_reset_all();loadBpTasks()}
 async function delBp(id){if(api())await api().bp_delete_task(id);loadBpTasks()}
+
+// ═══ TIMER ═══
+let timerInterval=null, timerTotal=0, timerLeft=0, timerRunning=false;
+
+function timerQuick(mins) {
+  $('timer-h').value = Math.floor(mins/60);
+  $('timer-m').value = mins%60;
+  $('timer-s').value = 0;
+  timerStart();
+}
+
+function timerStart() {
+  if (timerRunning) return;
+  const h=parseInt($('timer-h').value)||0, m=parseInt($('timer-m').value)||0, s=parseInt($('timer-s').value)||0;
+  if (timerLeft <= 0) {
+    timerTotal = h*3600 + m*60 + s;
+    timerLeft = timerTotal;
+  }
+  if (timerLeft <= 0) return;
+  timerRunning = true;
+  $('timer-start-btn').textContent = '⏳ Идёт...';
+  $('timer-start-btn').style.opacity = '0.5';
+  timerInterval = setInterval(() => {
+    timerLeft--;
+    if (timerLeft <= 0) {
+      timerLeft = 0;
+      timerStop();
+      timerAlarm();
+    }
+    timerRender();
+  }, 1000);
+  timerRender();
+}
+
+function timerPause() {
+  timerRunning = false;
+  if (timerInterval) clearInterval(timerInterval);
+  $('timer-start-btn').textContent = '▶ Старт';
+  $('timer-start-btn').style.opacity = '1';
+}
+
+function timerReset() {
+  timerPause();
+  timerLeft = 0; timerTotal = 0;
+  timerRender();
+}
+
+function timerStop() {
+  timerRunning = false;
+  if (timerInterval) clearInterval(timerInterval);
+  $('timer-start-btn').textContent = '▶ Старт';
+  $('timer-start-btn').style.opacity = '1';
+}
+
+function timerRender() {
+  const h=Math.floor(timerLeft/3600), m=Math.floor((timerLeft%3600)/60), s=timerLeft%60;
+  $('timer-display').textContent = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  const pct = timerTotal > 0 ? ((timerTotal - timerLeft) / timerTotal * 100) : 0;
+  $('timer-progress').style.width = pct + '%';
+  // Color change when near end
+  if (timerLeft <= 10 && timerLeft > 0) {
+    $('timer-display').style.color = 'var(--red)';
+    $('timer-display').style.textShadow = '0 0 30px var(--red-glow)';
+  } else if (timerLeft <= 60 && timerLeft > 0) {
+    $('timer-display').style.color = 'var(--yellow)';
+    $('timer-display').style.textShadow = '0 0 30px rgba(245,197,66,.3)';
+  } else {
+    $('timer-display').style.color = 'var(--accent)';
+    $('timer-display').style.textShadow = '0 0 30px var(--accent-g)';
+  }
+}
+
+function timerAlarm() {
+  $('timer-display').textContent = '00:00:00';
+  $('timer-display').style.color = 'var(--green)';
+  // Flash effect
+  let flashes = 0;
+  const flashInterval = setInterval(() => {
+    $('timer-display').style.opacity = flashes % 2 === 0 ? '0.3' : '1';
+    flashes++;
+    if (flashes > 10) { clearInterval(flashInterval); $('timer-display').style.opacity = '1'; }
+  }, 300);
+  // Sound
+  if ($('timer-sound').checked) {
+    playAlarmSound();
+  }
+}
+
+function playAlarmSound() {
+  // Generate alarm sound using Web Audio API
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const freqs = [800, 1000, 800, 1000, 800];
+    freqs.forEach((freq, i) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.frequency.value = freq;
+      osc.type = 'sine';
+      gain.gain.value = 0.3;
+      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + i * 0.3 + 0.3);
+      osc.start(ctx.currentTime + i * 0.3);
+      osc.stop(ctx.currentTime + i * 0.3 + 0.3);
+    });
+  } catch(e) {}
+}
+
+// ═══ GAME STATUS (checks if GTA5 is running — Windows only) ═══
+async function checkGameStatus() {
+  if (!api()) {
+    // Browser mode — always offline
+    $('game-dot').className = 'status-dot offline';
+    $('game-status').textContent = 'Игра не найдена';
+    return;
+  }
+  try {
+    const running = await api().check_game_running();
+    if (running) {
+      $('game-dot').className = 'status-dot online';
+      $('game-status').textContent = 'GTA5 запущена';
+    } else {
+      $('game-dot').className = 'status-dot offline';
+      $('game-status').textContent = 'Игра не найдена';
+    }
+  } catch(e) {
+    $('game-dot').className = 'status-dot offline';
+    $('game-status').textContent = 'Игра не найдена';
+  }
+}
+// Check every 10 seconds
+setInterval(checkGameStatus, 10000);
 
 // ═══ ANTI-AFK / KPK (UI only — logic runs on Windows) ═══
 let afkRunning=false,afkTicks=0;
