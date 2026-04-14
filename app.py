@@ -228,6 +228,17 @@ class Api:
         conn.commit()
         tid = cur.lastrowid
         conn.close()
+        # Discord уведомление
+        try:
+            color = 0x3dd68c if amount >= 0 else 0xf5555d
+            cat_name = {"work": "Работа", "resale": "Перекуп", "general": "Общее"}.get(category, category)
+            self.discord_send(
+                f"{'📈 Доход' if amount >= 0 else '📉 Расход'}: {cat_name}",
+                f"**${abs(amount):,.0f}**\n{comment}" if comment else f"**${abs(amount):,.0f}**",
+                color
+            )
+        except Exception:
+            pass
         return tid
 
     def tx_delete(self, tx_id):
@@ -283,6 +294,15 @@ class Api:
         conn.commit()
         iid = cur2.lastrowid
         conn.close()
+        # Discord уведомление
+        try:
+            self.discord_send(
+                f"📦 Новый товар: {name}",
+                f"**Куплено за ${purchase_price:,.0f}**",
+                0xf5c542
+            )
+        except Exception:
+            pass
         return iid
 
     def inv_sell(self, item_id, sale_price):
